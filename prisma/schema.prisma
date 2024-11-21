@@ -1,0 +1,224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum PictureQualities{
+  TwoD
+  ThreeD
+  IMAX2D
+  IMAX3D
+}
+
+enum Categories{
+  UA
+  A
+  KIDS
+}
+
+enum CastRoles{
+  Actor
+  Musician
+  Producer
+  Director
+}
+
+enum MemberRoles{
+  Customer
+  Admin
+}
+
+enum SeatClass{
+  GOLD
+  PLATINUM
+  SILVER
+  BALCONY
+  RECLINER
+  PREMIUM
+  ECONOMY
+}
+
+enum Genres {
+  Action 
+  Adventure
+  Animation
+  Comedy
+  Crime
+  Documentary
+  Drama
+  Family
+  Fantasy
+  History
+  Horror
+  Mystery
+  Romance
+}
+
+model Movie{
+  id String @default(uuid()) @id
+  name String @unique
+  description String
+  category Categories
+  rating Float
+  duration String
+  release_date DateTime
+  expiring_date DateTime
+  price Float
+  thumbnail String
+  coverurl String
+  languages Movie_Language[]
+  theatres Movie_Theatre[] 
+  casts Movie_CastCrew[]
+  bookings Booking[]
+  genres Movie_Genre[]
+  pictureQualites Movie_PictureQuality[]
+}
+
+model Movie_Genre{
+  id String @id @default(uuid())
+  movieId String?
+  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  genreId String?
+  genre Genre? @relation(fields: [genreId],references: [id],onDelete: SetNull)
+
+  @@unique([movieId,genreId])
+}
+
+model Genre{
+  id String @id @default(uuid())
+  title String @unique
+  movies Movie_Genre[]
+}
+
+model Movie_Theatre{
+  id String  @id @default(uuid())
+  theatreId String?
+  theatre Theatre? @relation(fields: [theatreId],references: [id], onDelete: SetNull)
+  movieId String?
+  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  screenId String
+  screen Screen[]
+  showTiming String
+
+  @@unique([movieId,theatreId,screenId,showTiming])
+}
+
+model Theatre{
+  id String @default(uuid()) @id
+  name String @unique
+  country String 
+  city String
+  location String 
+  movies Movie_Theatre[] 
+  bookings Booking[]
+  snacks Snack[]
+}
+
+model Snack{
+  id String @id @default(uuid())
+  name String @unique
+  weight Float
+  price Float
+  quantity Int
+  theatreId String?
+  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+}
+
+model Language{
+  id String @id @default(uuid())
+  title String @unique
+  code String @db.Char(2) //it follows ISO 639-1 language code
+  movie Movie_Language[]
+}
+
+model Movie_Language{
+  id String @id @default(uuid())
+  movieId String?
+  movie Movie? @relation(fields:[movieId],references:[id],onDelete: SetNull)
+  languageId String?
+  language Language? @relation(fields:[languageId],references: [id],onDelete: SetNull)
+
+  @@unique([movieId,languageId])
+}
+
+model PictureQuality{
+  id String @id @default(uuid())
+  title String @unique
+  movies Movie_PictureQuality[]
+}
+
+model Movie_PictureQuality{
+  id String @id @default(uuid())
+  movieId String?
+  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  pictureQualityId String?
+  pictureQuality PictureQuality? @relation(fields: [pictureQualityId],references: [id],onDelete: SetNull)
+}
+
+model CastCrew{
+  id String @id @default(uuid())
+  name String @unique
+  imageUrl String
+  movie Movie_CastCrew[] //relation
+}
+
+model Movie_CastCrew{
+  id String @id @default(uuid())
+  castId String? 
+  casts CastCrew? @relation(fields: [castId],references: [id],onDelete: SetNull)
+  movieId String?
+  movies Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  role CastRoles
+
+  @@unique([castId,movieId])
+}
+
+model Member{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  role MemberRoles
+  bookings Booking[]
+}
+
+model Booking{
+  id String @id @default(uuid())
+  movieId String?
+  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  memberId String?
+  member Member? @relation(fields: [memberId],references: [id],onDelete: SetNull)
+  theatreId String? // one booking will have only one theatre, but one theatre will have multiple bookings
+  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+  bookingDate DateTime
+}
+
+model Screen{
+  id String @id @default(uuid())
+  title String @unique
+  capacity Int @db.SmallInt
+  seatLayout String @db.Char(1)
+  seats Seat[]
+  theatreId String?
+  theatre Movie_Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+}
+
+model Seat{
+  id String @id @default(uuid())
+  title SeatClass
+  price Float
+  screenId String? 
+  screen Screen? @relation(fields: [screenId],references: [id],onDelete: SetNull)
+  
+  @@unique([title,screenId,price])
+}
