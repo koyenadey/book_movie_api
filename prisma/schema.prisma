@@ -13,14 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum PictureQualities{
-  TwoD
-  ThreeD
-  IMAX2D
-  IMAX3D
-}
-
 enum Categories{
   UA
   A
@@ -49,21 +41,7 @@ enum SeatClass{
   ECONOMY
 }
 
-enum Genres {
-  Action 
-  Adventure
-  Animation
-  Comedy
-  Crime
-  Documentary
-  Drama
-  Family
-  Fantasy
-  History
-  Horror
-  Mystery
-  Romance
-}
+
 
 model Movie{
   id String @default(uuid()) @id
@@ -188,6 +166,7 @@ model Member{
   id String @id @default(uuid())
   name String
   email String @unique
+  password String
   role MemberRoles
   bookings Booking[]
 }
