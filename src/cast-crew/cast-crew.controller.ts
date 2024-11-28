@@ -18,7 +18,7 @@ export class CastCrewController {
   constructor(private readonly castCrewService: CastCrewService) {}
 
   @Post()
-  createCastCrew(@Body() createCastCrewDto: CreateCastCrewDto) {
+  createCastCrew(@Body(ValidationPipe) createCastCrewDto: CreateCastCrewDto) {
     return this.castCrewService.createCastCrew(createCastCrewDto);
   }
 

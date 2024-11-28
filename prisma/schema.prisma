@@ -41,6 +41,19 @@ enum SeatClass{
   ECONOMY
 }
 
+enum SnackCategories{
+  BITES
+  BEVERAGES
+  DESSERT
+  COMBO
+  POPCORN
+}
+
+enum SnackTypes{
+  VEG
+  NON_VEG
+}
+
 
 
 model Movie{
@@ -109,6 +122,8 @@ model Snack{
   weight Float
   price Float
   quantity Int
+  categories SnackCategories
+  type SnackTypes
   theatreId String?
   theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
 }

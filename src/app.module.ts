@@ -9,9 +9,11 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LanguagesModule } from './languages/languages.module';
 import { CastCrewModule } from './cast-crew/cast-crew.module';
+import { SnacksModule } from './snacks/snacks.module';
+import { SeatsModule } from './seats/seats.module';
 
 @Module({
-  imports: [MoviesModule, DatabaseModule, GenresModule, UsersModule, AuthModule, LanguagesModule, CastCrewModule],
+  imports: [MoviesModule, DatabaseModule, GenresModule, UsersModule, AuthModule, LanguagesModule, CastCrewModule, SnacksModule, SeatsModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })

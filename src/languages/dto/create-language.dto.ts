@@ -23,13 +23,3 @@ export class CreateLanguageDto {
   @MaxLength(2)
   code: string;
 }
-
-export class movieLanguageDto {
-  @IsString()
-  @IsNotEmpty()
-  movieId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  languageId: string;
-}

@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 
 export class CreateCastCrewDto {
-  @IsAlpha()
+  @IsAlpha('en-US', { message: 'The name should only contain alphabets' })
   @IsNotEmpty()
   @IsString()
   @MinLength(10)
