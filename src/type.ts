@@ -13,3 +13,9 @@ export enum Genre {
   Mystery = 'Mystery',
   Romance = 'Romance',
 }
+
+export type Language = {
+  title: string;
+  code: string;
+  id: string;
+};

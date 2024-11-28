@@ -1,0 +1,47 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { LanguagesService } from './languages.service';
+import { CreateLanguageDto } from './dto/create-language.dto';
+import { UpdateLanguageDto } from './dto/update-language.dto';
+
+@Controller('languages')
+export class LanguagesController {
+  constructor(private readonly languagesService: LanguagesService) {}
+
+  @Post()
+  createLanguage(@Body(ValidationPipe) createLanguageDto: CreateLanguageDto) {
+    return this.languagesService.createLanguage(createLanguageDto);
+  }
+
+  @Get()
+  getAllLanguages() {
+    return this.languagesService.getAllLanguages();
+  }
+
+  @Get(':id')
+  getLanguageById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.languagesService.getLanguageById(id);
+  }
+
+  @Patch(':id')
+  updateLanguageById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(ValidationPipe) updateLanguageDto: UpdateLanguageDto,
+  ) {
+    return this.languagesService.updateLanguageById(id, updateLanguageDto);
+  }
+
+  @Delete(':id')
+  removeLanguageById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.languagesService.removeLanguageById(id);
+  }
+}
