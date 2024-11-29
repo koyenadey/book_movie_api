@@ -1,5 +1,6 @@
 import {
   IsAlpha,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -10,6 +11,19 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+
+enum SnackCategories {
+  Bites = 'BITES',
+  Beverages = 'BEVERAGES',
+  Desser = 'DESSERT',
+  Combo = 'COMBO',
+  Popcorn = 'POPCORN',
+}
+
+enum SnackTypes {
+  veg = 'VEG',
+  non_veg = 'NON_VEG',
+}
 
 export class CreateSnackDto {
   @IsAlpha()
@@ -39,4 +53,14 @@ export class CreateSnackDto {
   @IsString()
   @IsUUID()
   theatreId: string;
+
+  @IsEnum(SnackCategories)
+  @IsNotEmpty()
+  @IsString()
+  categories: SnackCategories;
+
+  @IsEnum(SnackTypes)
+  @IsNotEmpty()
+  @IsString()
+  type: SnackTypes;
 }

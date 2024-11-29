@@ -8,10 +8,12 @@ import {
   Delete,
   ParseUUIDPipe,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
+import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
 
 @Controller('seats')
 export class SeatsController {
@@ -23,8 +25,8 @@ export class SeatsController {
   }
 
   @Get()
-  getAllSeats(@Param('screenId', ParseUUIDPipe) screenId?: string) {
-    return this.seatsService.getAllSeats();
+  getAllSeats(@Query('screenId', OptionalUUIDPipe) screenId?: string) {
+    return this.seatsService.getAllSeats(screenId);
   }
 
   @Get(':id')

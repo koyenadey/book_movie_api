@@ -11,9 +11,10 @@ import { LanguagesModule } from './languages/languages.module';
 import { CastCrewModule } from './cast-crew/cast-crew.module';
 import { SnacksModule } from './snacks/snacks.module';
 import { SeatsModule } from './seats/seats.module';
+import { ScreensModule } from './screens/screens.module';
 
 @Module({
-  imports: [MoviesModule, DatabaseModule, GenresModule, UsersModule, AuthModule, LanguagesModule, CastCrewModule, SnacksModule, SeatsModule],
+  imports: [MoviesModule, DatabaseModule, GenresModule, UsersModule, AuthModule, LanguagesModule, CastCrewModule, SnacksModule, SeatsModule, ScreensModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })

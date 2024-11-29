@@ -8,12 +8,14 @@ import {
   Delete,
   ParseUUIDPipe,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { CastCrewService } from './cast-crew.service';
 import { CreateCastCrewDto } from './dto/create-cast-crew.dto';
 import { UpdateCastCrewDto } from './dto/update-cast-crew.dto';
+import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
 
-@Controller('cast-crew')
+@Controller('castsncrew')
 export class CastCrewController {
   constructor(private readonly castCrewService: CastCrewService) {}
 
@@ -23,8 +25,8 @@ export class CastCrewController {
   }
 
   @Get()
-  getAllCastCrew() {
-    return this.castCrewService.getAllCastCrew();
+  getAllCastCrew(@Query('movieId', OptionalUUIDPipe) movieId?: string) {
+    return this.castCrewService.getAllCastCrew(movieId);
   }
 
   @Get(':id')

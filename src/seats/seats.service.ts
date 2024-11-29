@@ -25,13 +25,7 @@ export class SeatsService {
               title: true, // title to show from Screen table & select
               theatre: {
                 // theatre relation of Screen Table that refers to Movie_Theatre jucntion table
-                select: {
-                  // select the relation theatre again that refers to Theatre table now
-                  theatre: {
-                    // and now in theatre table
-                    select: { name: true, city: true, location: true }, // select the name,city,location to show up
-                  },
-                },
+                select: { name: true, city: true, location: true }, // select the name,city,location to show up
               },
             },
           },

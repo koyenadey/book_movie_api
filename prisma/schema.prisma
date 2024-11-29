@@ -99,7 +99,6 @@ model Movie_Theatre{
   movieId String?
   movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
   screenId String
-  screen Screen[]
   showTiming String
 
   @@unique([movieId,theatreId,screenId,showTiming])
@@ -114,6 +113,7 @@ model Theatre{
   movies Movie_Theatre[] 
   bookings Booking[]
   snacks Snack[]
+  screen Screen[]
 }
 
 model Snack{
@@ -204,7 +204,7 @@ model Screen{
   seatLayout String @db.Char(1)
   seats Seat[]
   theatreId String?
-  theatre Movie_Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
 }
 
 model Seat{

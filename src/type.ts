@@ -19,3 +19,9 @@ export type Language = {
   code: string;
   id: string;
 };
+
+export type Movie = {
+  id: string;
+  name: string;
+  imageUrl: string;
+};
