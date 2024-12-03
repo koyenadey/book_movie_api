@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { MoviesModule } from './movies/movies.module';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseService } from './database/database.service';
-import { GenresModule } from './genre/genres.module';
-import { UsersModule } from './users/users.module';
+import { GenresModule } from './genres/genres.module';
+//import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LanguagesModule } from './languages/languages.module';
 import { CastCrewModule } from './cast-crew/cast-crew.module';
@@ -14,13 +14,15 @@ import { SeatsModule } from './seats/seats.module';
 import { ScreensModule } from './screens/screens.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { MembersModule } from './members/members.module';
+import { PictureQualitiesModule } from './picture-qualities/picture-qualities.module';
+import { TheatresModule } from './theatres/theatres.module';
 
 @Module({
   imports: [
     MoviesModule,
     DatabaseModule,
     GenresModule,
-    UsersModule,
+    //UsersModule,
     AuthModule,
     LanguagesModule,
     CastCrewModule,
@@ -29,6 +31,8 @@ import { MembersModule } from './members/members.module';
     ScreensModule,
     BookingsModule,
     MembersModule,
+    PictureQualitiesModule,
+    TheatresModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],

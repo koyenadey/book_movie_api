@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { MemberRoles } from '@prisma/client';
 import {
   IS_STRONG_PASSWORD,
@@ -17,19 +18,17 @@ export class CreateMemberDto {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(200)
+  @ApiProperty({ example: 'JohnDoe' })
   name: string;
 
   @IsEmail()
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ example: 'johndoe@mail.com' })
   email: string;
 
   @IsStrongPassword()
   @IsNotEmpty()
+  @ApiProperty({ example: 's0meComplexPa$$word' })
   password: string;
-
-  @IsEnum(MemberRoles)
-  @IsNotEmpty()
-  @IsString()
-  role: MemberRoles;
 }

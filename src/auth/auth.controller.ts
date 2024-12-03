@@ -1,26 +1,28 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { LoginDto } from './dto/login.dto';
+import { CreateMemberDto } from 'src/members/dto/create-member.dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './guards/auth.guard';
+import { ApiBody, ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
+import { ResponseLoginDto } from './dto/response-login.dto';
+import { ResponseRegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() input: { email: string; password: string }) {
-    return this.authService.authenticate(input);
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ type: ResponseLoginDto })
+  login(@Body(ValidationPipe) loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @Post('register')
+  @ApiBody({ type: CreateMemberDto })
+  @ApiCreatedResponse({ type: ResponseRegisterDto })
+  register(
+    @Body(ValidationPipe) registerDto: CreateMemberDto,
+  ): Promise<ResponseRegisterDto> {
+    return this.authService.register(registerDto);
   }
 }

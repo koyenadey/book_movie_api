@@ -11,6 +11,7 @@ import {
   IsDateString,
   IsUUID,
   IsArray,
+  IsUrl,
 } from 'class-validator';
 
 enum Genres {
@@ -88,18 +89,27 @@ export class CreateMovieDto {
   price: number;
 
   @IsNotEmpty()
-  @IsAlpha()
+  @IsUrl()
   @IsString()
   thumbnail: string;
 
   @IsNotEmpty()
-  @IsAlpha()
+  @IsUrl()
   @IsString()
   coverurl: string;
 
-  @IsNotEmpty()
-  @IsUUID()
-  @IsString()
   @IsArray()
-  genreIds: string[];
+  genreIds: string[]; //genres junction table
+
+  @IsArray()
+  languages: string[]; //language junction table
+
+  @IsArray()
+  theatres: string[]; //theatres junction table
+
+  @IsArray()
+  casts: string[]; //casts junction table
+
+  @IsArray()
+  pictureQualities: string[]; //pictureQualities junction table
 }

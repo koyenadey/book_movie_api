@@ -14,6 +14,7 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('bookings')
 export class BookingsController {
@@ -25,17 +26,29 @@ export class BookingsController {
   }
 
   @Get()
-  getAllBookings(
-    @Query('movieId', OptionalUUIDPipe) movieId?: string,
-    @Query('memberId', OptionalUUIDPipe) memberId?: string,
-    @Query('theatreId', OptionalUUIDPipe) theatreId?: string,
-  ) {
-    return this.bookingsService.getAllBookings(movieId, memberId, theatreId);
+  getAllBookings() {
+    return this.bookingsService.getAllBookings();
   }
 
   @Get(':id')
-  getDetailsById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.bookingsService.getDetailsById(id);
+  getBookingDetailsById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.bookingsService.getBookingDetailsById(id);
+  }
+
+  @Get(':movieId')
+  getBookingsByMovieId(@Param('movieId', ParseUUIDPipe) movieId: string) {
+    return this.bookingsService.getBookingsByMovieId(movieId);
+  }
+
+  @Get(':memberId')
+  getBookingsByMemberId(@Param('memberId', ParseUUIDPipe) memberId: string) {
+    this.bookingsService.getBookingsByMemberId(memberId);
+  }
+
+  @Get(':theatreId')
+  //@ApiResponse({type:})
+  getBookingsByTheatreId(@Param('theatreId', ParseUUIDPipe) theatreId: string) {
+    this.bookingsService.getBookingsByTheatreId(theatreId);
   }
 
   @Patch(':id')

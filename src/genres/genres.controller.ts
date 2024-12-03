@@ -9,7 +9,7 @@ import {
   Post,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateGenreDto } from 'src/genre/dto/create-genre.dto';
+import { CreateGenreDto } from 'src/genres/dto/create-genre.dto';
 import { GenresService } from './genres.service';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 

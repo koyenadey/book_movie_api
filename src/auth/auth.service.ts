@@ -1,58 +1,68 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ResponseLoginDto } from './dto/response-login.dto';
+import { LoginDto } from './dto/login.dto';
+import { CreateMemberDto } from 'src/members/dto/create-member.dto';
+import { MembersService } from 'src/members/members.service';
+import { comparePassword } from 'src/utils/hashPass';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
-
-type AuthInput = { email: string; password: string };
-type AuthOutput = { userId: string; userRole: string; email: string };
-type AuthResult = {
-  accessToken: string;
-  userId: string;
-  role: string;
-  email: string;
-};
+import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
+import { ResponseRegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly memberService: MembersService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async authenticate(input: AuthInput): Promise<AuthResult> {
-    const foundUser = await this.validateUser(input);
+  async login(loginDto: LoginDto): Promise<ResponseLoginDto> {
+    const memberToFind: ResponseMemberDto =
+      await this.memberService.getMemberProfile(loginDto.email);
+    if (!memberToFind)
+      throw new UnauthorizedException('The member does not exist.');
+    //Compare the password
+    const checkPassword = comparePassword(
+      loginDto.password,
+      memberToFind.password,
+    );
+    //If matches then create a token
+    if (checkPassword) {
+      const accessToken = await this.generateToken(
+        memberToFind.email,
+        memberToFind.role,
+      );
+      const member = this.transformMember(memberToFind);
 
-    if (!foundUser) throw new UnauthorizedException();
-
-    return this.signIn({
-      userId: foundUser.userId,
-      userRole: foundUser.userRole,
-      email: foundUser.email,
-    });
-  }
-
-  async validateUser(input: AuthInput): Promise<AuthOutput | null> {
-    const foundUser = await this.usersService.findUser(input.email);
-    if (foundUser && foundUser.password === input.password) {
       return {
-        userId: foundUser.id,
-        userRole: foundUser.role,
-        email: foundUser.email,
+        token: accessToken,
+        ...member,
       };
     }
-    return null;
+    throw new BadRequestException('Passwords do not match');
   }
 
-  async signIn(user: AuthOutput): Promise<AuthResult> {
-    const payload = {
-      sub: user.email,
-      role: user.userRole,
-    };
-    const accessToken = await this.jwtService.signAsync(payload);
+  async generateToken(email: string, role: string) {
+    const payload = { sub: email, role };
+    const token = await this.jwtService.signAsync(payload);
+    return token;
+  }
+
+  transformMember(memberObj: ResponseMemberDto) {
     return {
-      accessToken,
-      userId: user.userId,
-      role: user.userRole,
-      email: user.email,
+      id: memberObj.id,
+      name: memberObj.name,
+      email: memberObj.email,
+      role: memberObj.role,
     };
+  }
+
+  async register(registerDto: CreateMemberDto): Promise<ResponseRegisterDto> {
+    const { password, ...registerMember } =
+      await this.memberService.createMember(registerDto);
+    return registerMember;
   }
 }

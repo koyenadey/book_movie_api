@@ -12,16 +12,7 @@ export class MoviesService {
   create(createMovieDto: CreateMovieDto) {
     const { genreIds, ...movieData } = createMovieDto;
     try {
-      return this.databaseService.movie.create({
-        data: {
-          ...movieData,
-          genres: {
-            create: genreIds.map((genreId) => ({
-              genre: { connect: { id: genreId } },
-            })),
-          },
-        },
-      });
+      return '';
     } catch (err) {
       throw new Error(err.message);
     }
@@ -64,12 +55,13 @@ export class MoviesService {
   }
 
   update(id: string, updateMovieDto: UpdateMovieDto) {
-    return this.databaseService.movie.update({
-      where: {
-        id,
-      },
-      data: updateMovieDto,
-    });
+    return '';
+    // return this.databaseService.movie.update({
+    //   where: {
+    //     id,
+    //   },
+    //   data: updateMovieDto,
+    // });
   }
 
   remove(id: string) {

@@ -14,6 +14,7 @@ import { MoviesService } from './movies.service';
 import { Prisma } from '@prisma/client';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
 
 @Controller('movies')
 export class MoviesController {
@@ -25,7 +26,7 @@ export class MoviesController {
   }
 
   @Get()
-  findAll(@Query('genreId', ParseUUIDPipe) genreId?: string) {
+  findAll(@Query('genreId', OptionalUUIDPipe) genreId?: string) {
     return this.moviesService.findAll(genreId);
   }
 

@@ -113,20 +113,10 @@ model Theatre{
   movies Movie_Theatre[] 
   bookings Booking[]
   snacks Snack[]
-  screen Screen[]
+  screens Screen[] 
 }
 
-model Snack{
-  id String @id @default(uuid())
-  name String @unique
-  weight Float
-  price Float
-  quantity Int
-  categories SnackCategories
-  type SnackTypes
-  theatreId String?
-  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
-}
+
 
 model Language{
   id String @id @default(uuid())
@@ -195,24 +185,58 @@ model Booking{
   theatreId String? // one booking will have only one theatre, but one theatre will have multiple bookings
   theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
   bookingDate DateTime
+  price Float
+  showTiming String
+  seats Booking_Seat[]
+  snacks Booking_Snack[]
 }
+model Booking_Seat{
+  id String @id @default(uuid())
+  bookingId String?
+  bookings Booking? @relation(fields: [bookingId],references: [id], onDelete: SetNull)
+  seatId String?
+  seats Seat? @relation(fields: [seatId],references: [id],onDelete: SetNull)
+  showTiming String
 
+  @@unique([seatId,showTiming])
+}
 model Screen{
   id String @id @default(uuid())
   title String @unique
   capacity Int @db.SmallInt
   seatLayout String @db.Char(1)
   seats Seat[]
-  theatreId String?
+  theatreId String? // This screen belongs to so and so theatre
   theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
 }
 
+model Snack{
+  id String @id @default(uuid())
+  name String @unique
+  weight Float
+  price Float
+  quantity Int
+  categories SnackCategories
+  type SnackTypes
+  theatreId String?
+  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+  bookings Booking_Snack[]
+}
+
+model Booking_Snack{
+  id String @id @default(uuid())
+  bookingId String?
+  bookings Booking? @relation(fields: [bookingId],references: [id],onDelete: SetNull)
+  snackId String?
+  snacks Snack? @relation(fields: [snackId],references: [id],onDelete: SetNull)
+}
 model Seat{
   id String @id @default(uuid())
-  title SeatClass
+  row Int
+  section SeatClass
+  seatNumber String
   price Float
   screenId String? 
+  bookings Booking_Seat[]
   screen Screen? @relation(fields: [screenId],references: [id],onDelete: SetNull)
-  
-  @@unique([title,screenId,price])
 }

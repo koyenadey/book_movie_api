@@ -3,28 +3,25 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { encryptPassword } from 'src/utils/hashPass';
-import { MemberRoles } from '@prisma/client';
+import { Member, MemberRoles } from '@prisma/client';
+import {
+  ResponseMemberDetailsDto,
+  ResponseMemberDto,
+} from './dto/response-member.dto';
 
 @Injectable()
 export class MembersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  createMember(createMemberDto: CreateMemberDto) {
+  createMember(createMemberDto: CreateMemberDto): Promise<ResponseMemberDto> {
     const updated_password = encryptPassword(createMemberDto.password);
-    console.log(updated_password);
     createMemberDto.password = updated_password;
     return this.databaseService.member.create({
-      select: {
-        id: true,
-        name: true,
-        password: true,
-        role: true,
-      },
-      data: createMemberDto,
+      data: { ...createMemberDto, role: MemberRoles.Customer },
     });
   }
 
-  getAllMembers(role?: MemberRoles) {
+  getAllMembers(role?: MemberRoles): Promise<ResponseMemberDto[]> {
     if (role)
       return this.databaseService.member.findMany({
         where: {
@@ -34,23 +31,36 @@ export class MembersService {
     return this.databaseService.member.findMany();
   }
 
-  getMemberById(id: string) {
+  getMemberProfile(email: string): Promise<Member> {
     return this.databaseService.member.findUnique({
-      select: {
-        id: true,
-        name: true,
-        password: true,
-        role: true,
+      where: {
+        email,
       },
+    });
+  }
+
+  getMemberById(id: string): Promise<ResponseMemberDto> {
+    return this.databaseService.member.findUnique({
       where: { id },
     });
   }
 
-  update(id: number, updateMemeberDto: UpdateMemberDto) {
-    return `This action updates a #${id} memeber`;
+  updateMember(
+    id: string,
+    updateMemeberDto: UpdateMemberDto,
+  ): Promise<ResponseMemberDto> {
+    return this.databaseService.member.update({
+      where: { id },
+      data: updateMemeberDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} memeber`;
+  deleteMember(id: string): Promise<ResponseMemberDetailsDto> {
+    return this.databaseService.member.delete({
+      where: { id },
+      include: {
+        bookings: { select: { id: true, bookingDate: true } },
+      },
+    });
   }
 }
