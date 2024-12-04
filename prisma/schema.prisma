@@ -116,8 +116,6 @@ model Theatre{
   screens Screen[] 
 }
 
-
-
 model Language{
   id String @id @default(uuid())
   title String @unique
@@ -190,16 +188,6 @@ model Booking{
   seats Booking_Seat[]
   snacks Booking_Snack[]
 }
-model Booking_Seat{
-  id String @id @default(uuid())
-  bookingId String?
-  bookings Booking? @relation(fields: [bookingId],references: [id], onDelete: SetNull)
-  seatId String?
-  seats Seat? @relation(fields: [seatId],references: [id],onDelete: SetNull)
-  showTiming String
-
-  @@unique([seatId,showTiming])
-}
 model Screen{
   id String @id @default(uuid())
   title String @unique
@@ -228,7 +216,19 @@ model Booking_Snack{
   bookingId String?
   bookings Booking? @relation(fields: [bookingId],references: [id],onDelete: SetNull)
   snackId String?
+  qtyOrdered Int
   snacks Snack? @relation(fields: [snackId],references: [id],onDelete: SetNull)
+}
+
+model Booking_Seat{
+  id String @id @default(uuid())
+  bookingId String?
+  bookings Booking? @relation(fields: [bookingId],references: [id], onDelete: SetNull)
+  seatId String?
+  seats Seat? @relation(fields: [seatId],references: [id],onDelete: SetNull)
+  showTiming String
+
+  @@unique([seatId,showTiming])
 }
 model Seat{
   id String @id @default(uuid())

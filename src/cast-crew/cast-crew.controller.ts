@@ -15,7 +15,7 @@ import { CreateCastCrewDto } from './dto/create-cast-crew.dto';
 import { UpdateCastCrewDto } from './dto/update-cast-crew.dto';
 import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
 
-@Controller('castsncrew')
+@Controller('casts')
 export class CastCrewController {
   constructor(private readonly castCrewService: CastCrewService) {}
 

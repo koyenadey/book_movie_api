@@ -12,7 +12,7 @@ import {
 export class CreateBookingDto {
   @IsUUID()
   @ApiProperty()
-  moviedId: string; //6dc9edf7-1c03-48eb-8fdf-1acc193eea01
+  movieId: string; //6dc9edf7-1c03-48eb-8fdf-1acc193eea01
 
   @IsUUID()
   @ApiProperty()

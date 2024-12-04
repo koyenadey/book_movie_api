@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsAlpha,
   IsNotEmpty,
@@ -13,12 +14,12 @@ export class CreateCastCrewDto {
   @IsString()
   @MinLength(10)
   @MaxLength(255)
+  @ApiProperty()
   name: string;
 
-  @IsAlpha()
   @IsNotEmpty()
   @IsString()
-  @MinLength(10)
   @IsUrl()
+  @ApiProperty()
   imageUrl: string;
 }

@@ -1,3 +1,4 @@
+import { CastRoles } from '@prisma/client';
 import {
   IsAlpha,
   IsNotEmpty,
@@ -43,6 +44,17 @@ enum PictureQualities {
   IMAX3D = 'IMAX3D',
 }
 
+type MovieTheatreCreateType = {
+  theatreId: string;
+  screenId: string;
+  showTiming: string;
+};
+
+type MovieCastsCreateType = {
+  castId: string;
+  role: CastRoles;
+};
+
 export class CreateMovieDto {
   @MinLength(3, {
     message: 'A name must be atleast $constraint1 characters long',
@@ -61,11 +73,6 @@ export class CreateMovieDto {
   @IsNotEmpty()
   @IsString()
   category: Categories;
-
-  @IsEnum(PictureQualities)
-  @IsNotEmpty()
-  @IsString()
-  pictureQuality: PictureQualities;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
@@ -99,17 +106,17 @@ export class CreateMovieDto {
   coverurl: string;
 
   @IsArray()
-  genreIds: string[]; //genres junction table
+  genres: string[]; //genres junction table
 
   @IsArray()
-  languages: string[]; //language junction table
+  languages: string[]; //language junction table 812edcdc-eccb-4f28-b6cf-2f3d81717fa9,0912f031-40fa-4509-8efc-dbc033f49242
 
   @IsArray()
-  theatres: string[]; //theatres junction table
+  theatres: MovieTheatreCreateType[]; //theatres junction table 3f244730-b824-4da9-8291-58225828699c
 
   @IsArray()
-  casts: string[]; //casts junction table
+  casts: MovieCastsCreateType[]; //casts junction table 2d68f5b6-b891-43aa-b445-f11ae4d78cf5q
 
   @IsArray()
-  pictureQualities: string[]; //pictureQualities junction table
+  pictureQualities: string[]; //pictureQualities junction table 06c2d4d9-ef61-41f7-93fe-9a66ec036159, c2b4c8bc-d3ba-41b1-81a7-c7ba7cc509f4
 }

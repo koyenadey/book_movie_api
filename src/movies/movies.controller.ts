@@ -15,14 +15,18 @@ import { Prisma } from '@prisma/client';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
+import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
+import { ResponseMovieDto } from './dto/response-movie.dto';
 
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  @ApiBody({ type: CreateMovieDto })
+  @ApiCreatedResponse({ type: ResponseMovieDto })
+  createMovie(@Body(ValidationPipe) createMovieDto: CreateMovieDto) {
+    return this.moviesService.createMovie(createMovieDto);
   }
 
   @Get()
