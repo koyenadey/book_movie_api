@@ -1,3 +1,5 @@
+import { CastRoles } from '@prisma/client';
+
 export enum Genre {
   Action = 'Action',
   Adventure = 'Adventure',
@@ -24,4 +26,20 @@ export type Movie = {
   id: string;
   name: string;
   imageUrl: string;
+};
+
+export type BookSnackType = {
+  snackId: string;
+  qtyOrdered: number;
+};
+
+export type MovieCastsCreateType = {
+  castId: string;
+  role: CastRoles;
+};
+
+export type MovieTheatreCreateType = {
+  theatreId: string;
+  screenId: string;
+  showTiming: string;
 };

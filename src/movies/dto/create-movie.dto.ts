@@ -1,4 +1,4 @@
-import { CastRoles } from '@prisma/client';
+import { CastRoles, Categories } from '@prisma/client';
 import {
   IsAlpha,
   IsNotEmpty,
@@ -14,6 +14,7 @@ import {
   IsArray,
   IsUrl,
 } from 'class-validator';
+import { MovieCastsCreateType, MovieTheatreCreateType } from 'src/type';
 
 enum Genres {
   Action = 'Action',
@@ -31,29 +32,12 @@ enum Genres {
   Romance = 'Romance',
 }
 
-enum Categories {
-  UA = 'UA',
-  A = 'A',
-  KIDS = 'KIDS',
-}
-
-enum PictureQualities {
-  TwoD = 'TwoD',
-  ThreeD = 'ThreeD',
-  IMAX2D = 'IMAX2D',
-  IMAX3D = 'IMAX3D',
-}
-
-type MovieTheatreCreateType = {
-  theatreId: string;
-  screenId: string;
-  showTiming: string;
-};
-
-type MovieCastsCreateType = {
-  castId: string;
-  role: CastRoles;
-};
+// enum PictureQualities {
+//   TwoD = 'TwoD',
+//   ThreeD = 'ThreeD',
+//   IMAX2D = 'IMAX2D',
+//   IMAX3D = 'IMAX3D',
+// }
 
 export class CreateMovieDto {
   @MinLength(3, {
