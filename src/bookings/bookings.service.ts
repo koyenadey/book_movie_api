@@ -84,9 +84,15 @@ export class BookingsService {
         id: true,
         bookingDate: true,
         price: true,
-        movie: { select: { id: true, name: true } },
+        showTiming: true,
+        movie: { select: { name: true } },
         member: { select: { email: true, name: true } },
         theatre: { select: { name: true, city: true, location: true } },
+        seats: {
+          select: {
+            seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
       },
     });
   }
@@ -94,6 +100,20 @@ export class BookingsService {
   getBookingsByTheatreId(theatreId: string) {
     return this.databaseService.booking.findMany({
       where: { theatreId },
+      select: {
+        id: true,
+        movie: { select: { name: true } },
+        member: { select: { name: true, email: true } },
+        theatre: { select: { name: true } },
+        showTiming: true,
+        bookingDate: true,
+        price: true,
+        seats: {
+          select: {
+            seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
+      },
     });
   }
 
