@@ -211,9 +211,35 @@ export class BookingsService {
     });
   }
 
-  deleteBookingById(id: string) {
-    return this.databaseService.booking.delete({
-      where: { id },
-    });
+  async deleteBookingById(id: string): Promise<ResponseBookingDto> {
+    const { snacks, seats, ...deletedBooking } =
+      await this.databaseService.booking.delete({
+        where: { id },
+        select: {
+          id: true,
+          price: true,
+          bookingDate: true,
+          showTiming: true,
+          movie: { select: { name: true, category: true, duration: true } },
+          theatre: { select: { name: true, city: true, location: true } },
+          member: { select: { name: true, email: true } },
+          seats: {
+            select: {
+              seats: { select: { row: true, section: true, seatNumber: true } },
+            },
+          },
+          snacks: {
+            select: {
+              qtyOrdered: true,
+              snacks: { select: { name: true } },
+            },
+          },
+        },
+      });
+    return {
+      ...deletedBooking,
+      snacksOrdered: snacks,
+      seatsBooked: seats,
+    };
   }
 }
