@@ -85,7 +85,7 @@ export class BookingsService {
         bookingDate: true,
         price: true,
         showTiming: true,
-        movie: { select: { name: true } },
+        movie: { select: { name: true, category: true, duration: true } },
         member: { select: { email: true, name: true } },
         theatre: { select: { name: true, city: true, location: true } },
         seats: {
@@ -93,20 +93,28 @@ export class BookingsService {
             seats: { select: { row: true, section: true, seatNumber: true } },
           },
         },
+        snacks: {
+          select: {
+            qtyOrdered: true,
+            snacks: { select: { name: true } },
+          },
+        },
       },
     });
   }
 
-  getBookingsByTheatreId(theatreId: string) {
-    return this.databaseService.booking.findMany({
+  async getBookingsByTheatreId(
+    theatreId: string,
+  ): Promise<ResponseBookingDto[]> {
+    const bookingData = await this.databaseService.booking.findMany({
       where: { theatreId },
       select: {
         id: true,
         bookingDate: true,
         price: true,
         showTiming: true,
-        theatre: { select: { name: true } },
-        movie: { select: { name: true } },
+        theatre: { select: { name: true, city: true, location: true } },
+        movie: { select: { name: true, category: true, duration: true } },
         member: { select: { name: true, email: true } },
         seats: {
           select: {
@@ -116,24 +124,31 @@ export class BookingsService {
         snacks: {
           select: {
             qtyOrdered: true,
-            snacks: { select: { name: true, price: true } },
+            snacks: { select: { name: true } },
           },
         },
       },
     });
+    return bookingData.map(({ snacks, seats, ...booking }) => {
+      return {
+        ...booking,
+        snacksOrdered: snacks,
+        seatsBooked: seats,
+      };
+    });
   }
 
-  getBookingsByMemberId(memberId: string) {
-    return this.databaseService.booking.findMany({
+  async getBookingsByMemberId(memberId: string): Promise<ResponseBookingDto[]> {
+    const bookingData = await this.databaseService.booking.findMany({
       where: { memberId },
       select: {
         id: true,
         price: true,
         bookingDate: true,
-        member: { select: { name: true, email: true } },
         showTiming: true,
+        member: { select: { name: true, email: true } },
         theatre: { select: { name: true, city: true, location: true } },
-        movie: { select: { name: true } },
+        movie: { select: { name: true, category: true, duration: true } },
         seats: {
           select: {
             seats: { select: { row: true, section: true, seatNumber: true } },
@@ -142,17 +157,51 @@ export class BookingsService {
         snacks: {
           select: {
             qtyOrdered: true,
-            snacks: { select: { name: true, price: true } },
+            snacks: { select: { name: true } },
           },
         },
       },
     });
+    return bookingData.map(({ snacks, seats, ...booking }) => {
+      return {
+        ...booking,
+        snacksOrdered: snacks,
+        seatsBooked: seats,
+      };
+    });
   }
 
-  getBookingDetailsById(id: string) {
-    return this.databaseService.booking.findUnique({
-      where: { id },
-    });
+  async getBookingDetailsById(id: string): Promise<ResponseBookingDto> {
+    const { snacks, seats, ...booking } =
+      await this.databaseService.booking.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          price: true,
+          bookingDate: true,
+          showTiming: true,
+          movie: { select: { name: true, category: true, duration: true } },
+          theatre: { select: { name: true, city: true, location: true } },
+          member: { select: { name: true, email: true } },
+          seats: {
+            select: {
+              seats: { select: { row: true, section: true, seatNumber: true } },
+            },
+          },
+          snacks: {
+            select: {
+              qtyOrdered: true,
+              snacks: { select: { name: true } },
+            },
+          },
+        },
+      });
+
+    return {
+      ...booking,
+      snacksOrdered: snacks,
+      seatsBooked: seats,
+    };
   }
 
   updateById(id: string, updateBookingDto: UpdateBookingDto) {

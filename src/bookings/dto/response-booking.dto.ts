@@ -14,6 +14,9 @@ export class ResponseBookingDto {
   price: number;
 
   @ApiProperty()
+  showTiming: string;
+
+  @ApiProperty()
   movie: { name: string; category: string; duration: string };
 
   @ApiProperty()
@@ -27,10 +30,10 @@ export class ResponseBookingDto {
   };
 
   @ApiProperty()
-  showTiming: string;
-
-  @ApiProperty()
-  snacksOrdered: { qtyOrdered: number; snacks: { name: string } }[];
+  snacksOrdered: {
+    qtyOrdered: number;
+    snacks: { name: string };
+  }[];
 
   @ApiProperty()
   seatsBooked: {
