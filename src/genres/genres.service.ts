@@ -1,23 +1,24 @@
-import { Body, Get, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
+import { ResponseGenreDto } from './dto/response-genre.dto';
 
 @Injectable()
 export class GenresService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  createGenre(createGenreDto: CreateGenreDto) {
+  createGenre(createGenreDto: CreateGenreDto): Promise<ResponseGenreDto> {
     return this.databaseService.genre.create({
       data: createGenreDto,
     });
   }
 
-  getAllGenres() {
+  getAllGenres(): Promise<ResponseGenreDto[]> {
     return this.databaseService.genre.findMany();
   }
 
-  getGenreById(genreId: string) {
+  getGenreById(genreId: string): Promise<ResponseGenreDto> {
     return this.databaseService.genre.findUnique({
       where: {
         id: genreId,
@@ -25,7 +26,10 @@ export class GenresService {
     });
   }
 
-  updateGenreById(genreId: string, updateGenreDto: UpdateGenreDto) {
+  updateGenreById(
+    genreId: string,
+    updateGenreDto: UpdateGenreDto,
+  ): Promise<ResponseGenreDto> {
     return this.databaseService.genre.update({
       where: {
         id: genreId,
@@ -34,7 +38,7 @@ export class GenresService {
     });
   }
 
-  deleteGenreById(genreId: string) {
+  deleteGenreById(genreId: string): Promise<ResponseGenreDto> {
     return this.databaseService.genre.delete({
       where: {
         id: genreId,
