@@ -3,7 +3,10 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { Booking_Seat, Booking_Snack } from '@prisma/client';
-import { ResponseBookingDto } from './dto/response-booking.dto';
+import {
+  BookedSnackType,
+  ResponseBookingDto,
+} from './dto/response-booking.dto';
 
 @Injectable()
 export class BookingsService {
@@ -31,46 +34,42 @@ export class BookingsService {
       },
       data: { ...booking, bookingDate: new Date() },
     });
+
+    //create records in booking_seat
     const bookSeats = seats.map((seat) => ({
       bookingId: bookedMovie.id,
       seatId: seat,
       showTiming: bookedMovie.showTiming,
     }));
 
-    await this.databaseService.booking_Seat.createMany({
-      data: bookSeats,
-    });
+    const bookedSeats =
+      await this.databaseService.booking_Seat.createManyAndReturn({
+        data: bookSeats,
+        select: {
+          seats: { select: { row: true, section: true, seatNumber: true } },
+        },
+      });
 
-    const bookedSeats = await this.databaseService.booking_Seat.findMany({
-      where: { bookingId: bookedMovie.id },
-      include: {
-        seats: { select: { row: true, seatNumber: true, section: true } },
-      },
-    });
+    //create records in Booking_Snack
+    let bookedSnacks: BookedSnackType[];
 
-    let bookedSnacks = [];
     if (Array.isArray(snacks) && snacks.length > 0) {
       const bookSnacks = snacks.map((snack) => ({
         bookingId: bookedMovie.id,
-        snackId: snack,
+        ...snack,
       }));
 
-      await this.databaseService.booking_Snack.createMany({
-        data: bookSnacks,
-      });
-
-      bookedSnacks = await this.databaseService.booking_Snack.findMany({
-        where: { bookingId: bookedMovie.id },
-        include: {
-          snacks: { select: { name: true } },
-        },
-      });
+      bookedSnacks =
+        await this.databaseService.booking_Snack.createManyAndReturn({
+          data: bookSnacks,
+          select: { qtyOrdered: true, snacks: { select: { name: true } } },
+        });
     }
 
     return {
       ...bookedMovie,
-      seats: bookedSeats.map((seat) => seat.seats),
-      snacks: bookedSnacks.map((snack) => snack.snacks),
+      seatsBooked: bookedSeats,
+      snacksOrdered: bookedSnacks,
     };
   }
 
