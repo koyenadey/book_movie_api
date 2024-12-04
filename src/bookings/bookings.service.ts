@@ -102,15 +102,21 @@ export class BookingsService {
       where: { theatreId },
       select: {
         id: true,
-        movie: { select: { name: true } },
-        member: { select: { name: true, email: true } },
-        theatre: { select: { name: true } },
-        showTiming: true,
         bookingDate: true,
         price: true,
+        showTiming: true,
+        theatre: { select: { name: true } },
+        movie: { select: { name: true } },
+        member: { select: { name: true, email: true } },
         seats: {
           select: {
             seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
+        snacks: {
+          select: {
+            qtyOrdered: true,
+            snacks: { select: { name: true, price: true } },
           },
         },
       },
@@ -120,6 +126,26 @@ export class BookingsService {
   getBookingsByMemberId(memberId: string) {
     return this.databaseService.booking.findMany({
       where: { memberId },
+      select: {
+        id: true,
+        price: true,
+        bookingDate: true,
+        member: { select: { name: true, email: true } },
+        showTiming: true,
+        theatre: { select: { name: true, city: true, location: true } },
+        movie: { select: { name: true } },
+        seats: {
+          select: {
+            seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
+        snacks: {
+          select: {
+            qtyOrdered: true,
+            snacks: { select: { name: true, price: true } },
+          },
+        },
+      },
     });
   }
 
