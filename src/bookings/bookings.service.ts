@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
+import { BookSnackType, UpdateBookingDto } from './dto/update-booking.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { Booking_Seat, Booking_Snack } from '@prisma/client';
 import {
   BookedSnackType,
   ResponseBookingDto,
 } from './dto/response-booking.dto';
-import { BookedSnacksType } from 'src/type';
 
 @Injectable()
 export class BookingsService {
@@ -241,32 +244,116 @@ export class BookingsService {
   }
 
   async updateByBookingId(id: string, updateBookingDto: UpdateBookingDto) {
-    //Check if the snacks is updated then update the booking snack table
-    const newSnacks = updateBookingDto.snacks;
-    if (newSnacks) {
-      //First get all the snacks by that booking id //that will be an array
-      const bookedSnacks = await this.getAllBookedSnacks(id);
-      //Checking if the same snack is being added in newSnack
-      const sameSnacks = bookedSnacks.filter((snack) =>
-        newSnacks.some((newSnack) => newSnack.snackId === snack.snackId),
+    const { snacks: newSnacks, price } = updateBookingDto;
+
+    if (!newSnacks && !price)
+      throw new BadRequestException(
+        'Provide at least snacks,and price to update',
       );
-      if (sameSnacks) {
-        newSnacks.forEach((ssnack) => newSnacks.includes(ssnack));
+
+    //Fetch existing booking
+    const {
+      snacks: existingSnacks,
+      seats: existingSeats,
+      movie,
+      ...existingBooking
+    } = await this.databaseService.booking.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        seats: true,
+        snacks: true,
+        movie: true,
+      },
+    });
+
+    //Compare the existing snacks with new one to add or update
+    const snacksToAdd = newSnacks.filter(
+      (nSnack) =>
+        !existingSnacks.some((eSnack) => eSnack.snackId === nSnack.snackId),
+    );
+
+    const snacksToUpdate = newSnacks.filter((nSnack) =>
+      existingSnacks.some(
+        (eSnack) =>
+          eSnack.snackId === nSnack.snackId &&
+          eSnack.qtyOrdered !== nSnack.qtyOrdered,
+      ),
+    );
+
+    const snacksAdded: BookSnackType[] = [];
+    const snacksUpdated: BookSnackType[] = [];
+    const seatsUpdated: BookSnackType[] = [];
+
+    if (newSnacks && newSnacks.length > 0) {
+      if (snacksToAdd && snacksToAdd.length > 0) {
+        const snackAdded = await this.getAddedSnacksData(id, snacksToAdd);
+        snacksAdded.push(...snackAdded);
+      }
+      if (snacksToUpdate && snacksToUpdate.length > 0) {
+        const snackUpdated = await this.getUpdatedSnacksData(
+          snacksToUpdate,
+          id,
+        );
+        snacksUpdated.push(...snackUpdated);
       }
     }
-
-    //Scenario : 1- Customer added nachos - means one more record needs to be created in junction table
-    //Important is how data is coming, the only new one? so creation is required in junction
-    //Price will be updated in Booking table
-
-    //Scenario : 2- Customer deleted caramel popcorn 1 qty - means one record needs to be deleted from the junction table
-    //Price will be updated in Booking table
+    return {
+      ...existingBooking,
+      snacksOrdered: [
+        ...snacksAdded.map((snack) => ({
+          qtyOrdered: snack.qtyOrdered,
+          snack: { name: snack.snackId },
+        })),
+        ...snacksUpdated.map((snack) => ({
+          qtyOrdered: snack.qtyOrdered,
+          snack: { name: snack.snackId },
+        })),
+      ],
+      ...existingSeats,
+    };
   }
 
-  getAllBookedSnacks(bookingId: string): Promise<BookedSnacksType[]> {
-    return this.databaseService.booking_Snack.findMany({
-      where: { bookingId },
-    });
+  async getUpdatedSnacksData(snacksToUpdate: BookSnackType[], bookingId) {
+    const updatedSnacksData: BookSnackType[] = [];
+
+    for (const nSnack of snacksToUpdate) {
+      const { snacks: updatedSnacks, ...updatedBooking } =
+        await this.databaseService.booking.update({
+          where: { id: bookingId },
+          data: {
+            snacks: {
+              update: {
+                where: { id: nSnack.id },
+                data: { qtyOrdered: nSnack.qtyOrdered },
+              },
+            },
+          },
+          include: { snacks: true },
+        });
+
+      updatedSnacksData.push(...updatedSnacks);
+    }
+    return updatedSnacksData;
+  }
+
+  async getAddedSnacksData(bookingId, snacksToAdd) {
+    const { snacks: addedSnacks, ...addedBooking } =
+      await this.databaseService.booking.update({
+        where: { id: bookingId },
+        data: {
+          snacks: {
+            createMany: {
+              data: snacksToAdd,
+            },
+          },
+        },
+        include: {
+          snacks: true,
+        },
+      });
+    return addedSnacks;
   }
 
   async deleteBookingById(id: string): Promise<ResponseBookingDto> {

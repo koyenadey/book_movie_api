@@ -49,10 +49,3 @@ export type UpdateBookingSeatType = {
   section: SeatClass;
   seatNumber: string;
 };
-
-export type BookedSnacksType = {
-  id: string;
-  bookingId: string;
-  snackId: string;
-  qtyOrdered: number;
-};
