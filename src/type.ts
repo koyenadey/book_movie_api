@@ -1,4 +1,4 @@
-import { CastRoles } from '@prisma/client';
+import { CastRoles, SeatClass } from '@prisma/client';
 
 export enum Genre {
   Action = 'Action',
@@ -42,4 +42,17 @@ export type MovieTheatreCreateType = {
   theatreId: string;
   screenId: string;
   showTiming: string;
+};
+
+export type UpdateBookingSeatType = {
+  row: number;
+  section: SeatClass;
+  seatNumber: string;
+};
+
+export type BookedSnacksType = {
+  id: string;
+  bookingId: string;
+  snackId: string;
+  qtyOrdered: number;
 };

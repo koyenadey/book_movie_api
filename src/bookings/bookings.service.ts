@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { DatabaseService } from 'src/database/database.service';
@@ -7,6 +7,7 @@ import {
   BookedSnackType,
   ResponseBookingDto,
 } from './dto/response-booking.dto';
+import { BookedSnacksType } from 'src/type';
 
 @Injectable()
 export class BookingsService {
@@ -73,12 +74,40 @@ export class BookingsService {
     };
   }
 
-  getAllBookings() {
-    return this.databaseService.booking.findMany();
+  async getAllBookings(): Promise<ResponseBookingDto[]> {
+    const bookings = await this.databaseService.booking.findMany({
+      select: {
+        id: true,
+        bookingDate: true,
+        price: true,
+        showTiming: true,
+        movie: { select: { name: true, category: true, duration: true } },
+        member: { select: { email: true, name: true } },
+        theatre: { select: { name: true, city: true, location: true } },
+        seats: {
+          select: {
+            seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
+        snacks: {
+          select: {
+            qtyOrdered: true,
+            snacks: { select: { name: true } },
+          },
+        },
+      },
+    });
+    return bookings.map(({ snacks, seats, ...booking }) => {
+      return {
+        ...booking,
+        snacksOrdered: snacks,
+        seatsBooked: seats,
+      };
+    });
   }
 
-  getBookingsByMovieId(movieId: string) {
-    return this.databaseService.booking.findMany({
+  async getBookingsByMovieId(movieId: string): Promise<ResponseBookingDto[]> {
+    const bookingData = await this.databaseService.booking.findMany({
       where: { movieId },
       select: {
         id: true,
@@ -100,6 +129,13 @@ export class BookingsService {
           },
         },
       },
+    });
+    return bookingData.map(({ snacks, seats, ...booking }) => {
+      return {
+        ...booking,
+        snacksOrdered: snacks,
+        seatsBooked: seats,
+      };
     });
   }
 
@@ -204,10 +240,32 @@ export class BookingsService {
     };
   }
 
-  updateById(id: string, updateBookingDto: UpdateBookingDto) {
-    return this.databaseService.booking.update({
-      where: { id },
-      data: updateBookingDto,
+  async updateByBookingId(id: string, updateBookingDto: UpdateBookingDto) {
+    //Check if the snacks is updated then update the booking snack table
+    const newSnacks = updateBookingDto.snacks;
+    if (newSnacks) {
+      //First get all the snacks by that booking id //that will be an array
+      const bookedSnacks = await this.getAllBookedSnacks(id);
+      //Checking if the same snack is being added in newSnack
+      const sameSnacks = bookedSnacks.filter((snack) =>
+        newSnacks.some((newSnack) => newSnack.snackId === snack.snackId),
+      );
+      if (sameSnacks) {
+        newSnacks.forEach((ssnack) => newSnacks.includes(ssnack));
+      }
+    }
+
+    //Scenario : 1- Customer added nachos - means one more record needs to be created in junction table
+    //Important is how data is coming, the only new one? so creation is required in junction
+    //Price will be updated in Booking table
+
+    //Scenario : 2- Customer deleted caramel popcorn 1 qty - means one record needs to be deleted from the junction table
+    //Price will be updated in Booking table
+  }
+
+  getAllBookedSnacks(bookingId: string): Promise<BookedSnacksType[]> {
+    return this.databaseService.booking_Snack.findMany({
+      where: { bookingId },
     });
   }
 

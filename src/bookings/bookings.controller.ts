@@ -61,11 +61,11 @@ export class BookingsController {
   @Patch(':id')
   @ApiBody({ type: UpdateBookingDto })
   @ApiOkResponse({ type: ResponseBookingDto })
-  updateById(
+  updateByBookingId(
     @Param('id', ParseUUIDPipe) id: string,
     @Body(ValidationPipe) updateBookingDto: UpdateBookingDto,
   ) {
-    return this.bookingsService.updateById(id, updateBookingDto);
+    return this.bookingsService.updateByBookingId(id, updateBookingDto);
   }
 
   @Delete(':id')
