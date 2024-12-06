@@ -282,42 +282,36 @@ export class BookingsService {
       ),
     );
 
-    const snacksAdded: BookSnackType[] = [];
-    const snacksUpdated: BookSnackType[] = [];
-    const seatsUpdated: BookSnackType[] = [];
-
     if (newSnacks && newSnacks.length > 0) {
       if (snacksToAdd && snacksToAdd.length > 0) {
-        const snackAdded = await this.getAddedSnacksData(id, snacksToAdd);
-        snacksAdded.push(...snackAdded);
+        await this.getAddedSnacksData(id, snacksToAdd);
       }
       if (snacksToUpdate && snacksToUpdate.length > 0) {
-        const snackUpdated = await this.getUpdatedSnacksData(
-          snacksToUpdate,
-          id,
-        );
-        snacksUpdated.push(...snackUpdated);
+        await this.getUpdatedSnacksData(snacksToUpdate, id);
       }
     }
-    return {
-      ...existingBooking,
-      snacksOrdered: [
-        ...snacksAdded.map((snack) => ({
-          qtyOrdered: snack.qtyOrdered,
-          snack: { name: snack.snackId },
-        })),
-        ...snacksUpdated.map((snack) => ({
-          qtyOrdered: snack.qtyOrdered,
-          snack: { name: snack.snackId },
-        })),
-      ],
-      ...existingSeats,
-    };
+    return this.databaseService.booking.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        price: true,
+        showTiming: true,
+        bookingDate: true,
+        member: { select: { email: true, name: true } },
+        movie: { select: { name: true, category: true, duration: true } },
+        seats: {
+          select: {
+            seats: { select: { row: true, section: true, seatNumber: true } },
+          },
+        },
+        snacks: {
+          select: { snacks: { select: { name: true } }, qtyOrdered: true },
+        },
+      },
+    });
   }
 
   async getUpdatedSnacksData(snacksToUpdate: BookSnackType[], bookingId) {
-    const updatedSnacksData: BookSnackType[] = [];
-
     for (const nSnack of snacksToUpdate) {
       const { snacks: updatedSnacks, ...updatedBooking } =
         await this.databaseService.booking.update({
@@ -332,10 +326,7 @@ export class BookingsService {
           },
           include: { snacks: true },
         });
-
-      updatedSnacksData.push(...updatedSnacks);
     }
-    return updatedSnacksData;
   }
 
   async getAddedSnacksData(bookingId, snacksToAdd) {
@@ -353,7 +344,6 @@ export class BookingsService {
           snacks: true,
         },
       });
-    return addedSnacks;
   }
 
   async deleteBookingById(id: string): Promise<ResponseBookingDto> {
