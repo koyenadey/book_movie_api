@@ -3,17 +3,21 @@ import { CreateCastCrewDto } from './dto/create-cast-crew.dto';
 import { UpdateCastCrewDto } from './dto/update-cast-crew.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { Movie } from '../type';
+import { ResponseCastDto } from './dto/response-cast-crew.dto';
 
 @Injectable()
 export class CastCrewService {
   constructor(private readonly databaseService: DatabaseService) {}
-  createCastCrew(createCastCrewDto: CreateCastCrewDto) {
+
+  createCastCrew(
+    createCastCrewDto: CreateCastCrewDto,
+  ): Promise<ResponseCastDto> {
     return this.databaseService.castCrew.create({
       data: createCastCrewDto,
     });
   }
 
-  getAllCastCrew(movieId?: string) {
+  getAllCastCrew(movieId?: string): Promise<ResponseCastDto[]> {
     if (movieId) {
       return this.databaseService.castCrew.findMany({
         where: {
@@ -25,7 +29,7 @@ export class CastCrewService {
     return this.databaseService.castCrew.findMany();
   }
 
-  getCastCrewById(id: string) {
+  getCastCrewById(id: string): Promise<ResponseCastDto> {
     return this.databaseService.castCrew.findUnique({
       where: {
         id,
@@ -33,7 +37,10 @@ export class CastCrewService {
     });
   }
 
-  updateCastCrewById(id: string, updateCastCrewDto: UpdateCastCrewDto) {
+  updateCastCrewById(
+    id: string,
+    updateCastCrewDto: UpdateCastCrewDto,
+  ): Promise<ResponseCastDto> {
     return this.databaseService.castCrew.update({
       where: {
         id,
@@ -42,7 +49,7 @@ export class CastCrewService {
     });
   }
 
-  deleteCastCrewById(id: string) {
+  deleteCastCrewById(id: string): Promise<ResponseCastDto> {
     return this.databaseService.castCrew.delete({
       where: {
         id,
