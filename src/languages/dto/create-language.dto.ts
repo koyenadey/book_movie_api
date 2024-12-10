@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsAlpha,
   IsArray,
@@ -14,6 +15,7 @@ export class CreateLanguageDto {
   @IsNotEmpty()
   @MinLength(5)
   @MaxLength(25)
+  @ApiProperty()
   title: string;
 
   @IsAlpha()
@@ -21,5 +23,6 @@ export class CreateLanguageDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(2)
+  @ApiProperty()
   code: string;
 }
