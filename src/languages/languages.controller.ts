@@ -14,7 +14,7 @@ import {
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
-import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseLanguageDto } from './dto/response-language.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { MemberRoles } from '@prisma/client';
@@ -37,16 +37,20 @@ export class LanguagesController {
   }
 
   @Get()
+  @ApiOkResponse({ type: ResponseLanguageDto })
   getAllLanguages() {
     return this.languagesService.getAllLanguages();
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: ResponseLanguageDto })
   getLanguageById(@Param('id', ParseUUIDPipe) id: string) {
     return this.languagesService.getLanguageById(id);
   }
 
   @Patch(':id')
+  @ApiBody({ type: UpdateLanguageDto })
+  @ApiOkResponse({ type: ResponseLanguageDto })
   updateLanguageById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body(ValidationPipe) updateLanguageDto: UpdateLanguageDto,
@@ -55,6 +59,7 @@ export class LanguagesController {
   }
 
   @Delete(':id')
+  @ApiOkResponse({ type: ResponseLanguageDto })
   removeLanguageById(@Param('id', ParseUUIDPipe) id: string) {
     return this.languagesService.removeLanguageById(id);
   }
