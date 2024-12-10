@@ -8,18 +8,26 @@ import {
   Delete,
   ValidationPipe,
   ParseUUIDPipe,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
 import { ResponseLanguageDto } from './dto/response-language.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { MemberRoles } from '@prisma/client';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('languages')
 export class LanguagesController {
   constructor(private readonly languagesService: LanguagesService) {}
 
   @Post()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(MemberRoles.Admin)
   @ApiBody({ type: CreateLanguageDto })
   @ApiCreatedResponse({ type: ResponseLanguageDto })
   createLanguage(

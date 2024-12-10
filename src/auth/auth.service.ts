@@ -11,6 +11,7 @@ import { comparePassword } from 'src/utils/hashPass';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
 import { ResponseRegisterDto } from './dto/register.dto';
+import { MemberRoles } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -45,7 +46,7 @@ export class AuthService {
     throw new BadRequestException('Passwords do not match');
   }
 
-  async generateToken(email: string, role: string) {
+  async generateToken(email: string, role: MemberRoles) {
     const payload = { sub: email, role };
     const token = await this.jwtService.signAsync(payload);
     return token;
