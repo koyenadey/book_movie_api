@@ -7,7 +7,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { BookSnackType } from 'src/type';
+import { BookSnackType } from 'src/common/type';
 
 export class CreateBookingDto {
   @IsUUID()

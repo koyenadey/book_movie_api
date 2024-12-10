@@ -7,7 +7,7 @@ import { ResponseLoginDto } from './dto/response-login.dto';
 import { LoginDto } from './dto/login.dto';
 import { CreateMemberDto } from 'src/members/dto/create-member.dto';
 import { MembersService } from 'src/members/members.service';
-import { comparePassword } from 'src/utils/hashPass';
+import { comparePassword } from 'src/common/utils/hashPass';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
 import { ResponseRegisterDto } from './dto/register.dto';

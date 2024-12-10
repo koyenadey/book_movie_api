@@ -9,6 +9,9 @@ import {
   ValidationPipe,
   Query,
   ParseUUIDPipe,
+  UseGuards,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -26,6 +29,9 @@ import {
   ResponseMemberDetailsDto,
   ResponseMemberDto,
 } from './dto/response-member.dto';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('members')
 export class MembersController {
@@ -49,29 +55,41 @@ export class MembersController {
   }
 
   @Get('profile')
+  @UseGuards(AuthGuard)
   @ApiQuery({ required: true, name: 'email' })
   @ApiResponse({ type: ResponseMemberDto })
-  getMemberProfile(@Query('email') emailId: string) {
+  getMemberProfile(
+    @Request() req: { email: string; role: MemberRoles },
+    @Query('email') emailId: string,
+  ) {
+    if (req.role !== MemberRoles.Admin && req.email !== emailId)
+      throw new UnauthorizedException(
+        "You are not authorized to access other's data!",
+      );
     return this.membersService.getMemberProfile(emailId);
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(MemberRoles.Admin)
   @ApiResponse({ type: ResponseMemberDetailsDto })
   getMemberById(@Param('id', ParseUUIDPipe) id: string) {
     return this.membersService.getMemberById(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   @ApiBody({ type: UpdateMemberDto })
   @ApiResponse({ type: ResponseMemberDto })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) updateMemeberDto: UpdateMemberDto,
+    @Body(ValidationPipe) updateMemberDto: UpdateMemberDto,
   ) {
-    return this.membersService.updateMember(id, updateMemeberDto);
+    return this.membersService.updateMember(id, updateMemberDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   @ApiResponse({ type: ResponseMemberDetailsDto })
   deleteMember(
     @Param('id', ParseUUIDPipe) id: string,

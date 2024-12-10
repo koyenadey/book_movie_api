@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { encryptPassword } from 'src/utils/hashPass';
+import { encryptPassword } from 'src/common/utils/hashPass';
 import { Member, MemberRoles } from '@prisma/client';
 import {
   ResponseMemberDetailsDto,

@@ -14,7 +14,7 @@ import {
   IsArray,
   IsUrl,
 } from 'class-validator';
-import { MovieCastsCreateType, MovieTheatreCreateType } from 'src/type';
+import { MovieCastsCreateType, MovieTheatreCreateType } from 'src/common/type';
 
 enum Genres {
   Action = 'Action',

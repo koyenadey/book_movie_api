@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCastCrewDto } from './dto/create-cast-crew.dto';
 import { UpdateCastCrewDto } from './dto/update-cast-crew.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { Movie } from '../type';
+import { Movie } from '../common/type';
 import { ResponseCastDto } from './dto/response-cast-crew.dto';
 
 @Injectable()
