@@ -31,7 +31,7 @@ export class MembersService {
     return this.databaseService.member.findMany();
   }
 
-  getMemberProfile(email: string): Promise<Member> {
+  getMemberProfile(email: string): Promise<ResponseMemberDto> {
     return this.databaseService.member.findUnique({
       where: {
         email,
@@ -47,11 +47,11 @@ export class MembersService {
 
   updateMember(
     id: string,
-    updateMemeberDto: UpdateMemberDto,
+    updateMemberDto: UpdateMemberDto,
   ): Promise<ResponseMemberDto> {
     return this.databaseService.member.update({
       where: { id },
-      data: updateMemeberDto,
+      data: updateMemberDto,
     });
   }
 
