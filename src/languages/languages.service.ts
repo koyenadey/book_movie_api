@@ -3,22 +3,25 @@ import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { Language } from 'src/type';
+import { ResponseLanguageDto } from './dto/response-language.dto';
 
 @Injectable()
 export class LanguagesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  createLanguage(createLanguageDto: CreateLanguageDto) {
+  createLanguage(
+    createLanguageDto: CreateLanguageDto,
+  ): Promise<ResponseLanguageDto> {
     return this.databaseService.language.create({
       data: createLanguageDto,
     });
   }
 
-  getAllLanguages() {
+  getAllLanguages(): Promise<ResponseLanguageDto[]> {
     return this.databaseService.language.findMany();
   }
 
-  getLanguageById(id: string) {
+  getLanguageById(id: string): Promise<ResponseLanguageDto> {
     return this.databaseService.language.findUnique({
       where: {
         id,
@@ -26,7 +29,10 @@ export class LanguagesService {
     });
   }
 
-  updateLanguageById(id: string, updateLanguageDto: UpdateLanguageDto) {
+  updateLanguageById(
+    id: string,
+    updateLanguageDto: UpdateLanguageDto,
+  ): Promise<ResponseLanguageDto> {
     return this.databaseService.language.update({
       where: {
         id,
@@ -35,7 +41,7 @@ export class LanguagesService {
     });
   }
 
-  removeLanguageById(id: string) {
+  removeLanguageById(id: string): Promise<ResponseLanguageDto> {
     return this.databaseService.language.delete({
       where: {
         id,
