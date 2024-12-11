@@ -47,6 +47,8 @@ export class MembersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(MemberRoles.Admin)
   @ApiOkResponse({ isArray: true, type: ResponseMemberDto })
   getAllMembers(
     @Query('role') role?: MemberRoles,
