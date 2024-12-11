@@ -14,13 +14,14 @@ import {
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
-import { OptionalUUIDPipe } from 'src/pipes/optionalUuidPipe.pipe';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseBookingDto } from './dto/response-booking.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { MemberRoles } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Permissions } from 'src/auth/decorators/permissions.decorator';
+import { ActionPermissions } from 'src/common/type';
 
 @Controller('bookings')
 export class BookingsController {
