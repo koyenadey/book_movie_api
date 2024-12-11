@@ -9,7 +9,6 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
   UseGuards,
-  SetMetadata,
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
@@ -49,6 +48,8 @@ export class LanguagesController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(MemberRoles.Admin)
   @ApiBody({ type: UpdateLanguageDto })
   @ApiOkResponse({ type: ResponseLanguageDto })
   updateLanguageById(
@@ -59,6 +60,8 @@ export class LanguagesController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(MemberRoles.Admin)
   @ApiOkResponse({ type: ResponseLanguageDto })
   removeLanguageById(@Param('id', ParseUUIDPipe) id: string) {
     return this.languagesService.removeLanguageById(id);

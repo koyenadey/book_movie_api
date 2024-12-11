@@ -1,5 +1,8 @@
 import {
   BadRequestException,
+  HttpCode,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,6 +15,12 @@ import { JwtService } from '@nestjs/jwt';
 import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
 import { ResponseRegisterDto } from './dto/register.dto';
 import { MemberRoles } from '@prisma/client';
+import { MembersController } from 'src/members/members.controller';
+
+type MemberError = {
+  status: HttpStatus;
+  message: string;
+};
 
 @Injectable()
 export class AuthService {
@@ -21,29 +30,42 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<ResponseLoginDto> {
-    const memberToFind: ResponseMemberDto =
-      await this.memberService.getMemberProfile(loginDto.email);
-    if (!memberToFind)
-      throw new UnauthorizedException('The member does not exist.');
-    //Compare the password
-    const checkPassword = comparePassword(
-      loginDto.password,
-      memberToFind.password,
-    );
-    //If matches then create a token
-    if (checkPassword) {
-      const accessToken = await this.generateToken(
-        memberToFind.email,
-        memberToFind.role,
-      );
-      const member = this.transformMember(memberToFind);
+    const memberToFind: ResponseMemberDto | MemberError =
+      await this.validateUser(loginDto.email, loginDto.password);
 
+    if (this.isMemberError(memberToFind))
+      throw new HttpException(memberToFind.message, memberToFind.status);
+
+    const accessToken = await this.generateToken(
+      memberToFind.email,
+      memberToFind.role,
+    );
+
+    return {
+      token: accessToken,
+      ...memberToFind,
+    };
+  }
+
+  isMemberError(obj: any): obj is MemberError {
+    return 'status' in obj && 'message' in obj;
+  }
+
+  async validateUser(
+    dtoEmail: string,
+    dtoPassword: string,
+  ): Promise<ResponseMemberDto | MemberError> {
+    const userToFind: ResponseMemberDto =
+      await this.memberService.getMemberProfile(dtoEmail);
+    if (!userToFind)
+      return { status: HttpStatus.NOT_FOUND, message: 'User does not exist' };
+    const passwordIsValid = comparePassword(dtoPassword, userToFind.password);
+    if (!passwordIsValid)
       return {
-        token: accessToken,
-        ...member,
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Password does not match',
       };
-    }
-    throw new BadRequestException('Passwords do not match');
+    return userToFind;
   }
 
   async generateToken(email: string, role: MemberRoles) {
