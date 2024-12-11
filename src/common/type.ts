@@ -49,3 +49,7 @@ export type UpdateBookingSeatType = {
   section: SeatClass;
   seatNumber: string;
 };
+
+export enum ActionPermissions {
+  UpdateOwn = 'update-own',
+}

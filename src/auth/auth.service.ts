@@ -53,18 +53,21 @@ export class AuthService {
 
   async validateUser(
     dtoEmail: string,
-    dtoPassword: string,
+    dtoPassword?: string,
   ): Promise<ResponseMemberDto | MemberError> {
     const userToFind: ResponseMemberDto =
       await this.memberService.getMemberProfile(dtoEmail);
     if (!userToFind)
       return { status: HttpStatus.NOT_FOUND, message: 'User does not exist' };
-    const passwordIsValid = comparePassword(dtoPassword, userToFind.password);
-    if (!passwordIsValid)
-      return {
-        status: HttpStatus.BAD_REQUEST,
-        message: 'Password does not match',
-      };
+
+    if (dtoPassword) {
+      const passwordIsValid = comparePassword(dtoPassword, userToFind.password);
+      if (!passwordIsValid)
+        return {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Password does not match',
+        };
+    }
     return userToFind;
   }
 
@@ -72,15 +75,6 @@ export class AuthService {
     const payload = { sub: email, role };
     const token = await this.jwtService.signAsync(payload);
     return token;
-  }
-
-  transformMember(memberObj: ResponseMemberDto) {
-    return {
-      id: memberObj.id,
-      name: memberObj.name,
-      email: memberObj.email,
-      role: memberObj.role,
-    };
   }
 
   async register(registerDto: CreateMemberDto): Promise<ResponseRegisterDto> {
