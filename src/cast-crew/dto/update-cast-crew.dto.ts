@@ -17,11 +17,11 @@ export class UpdateCastCrewDto extends PartialType(CreateCastCrewDto) {
   @MinLength(10)
   @MaxLength(255)
   @ApiProperty()
-  name: string;
+  name?: string;
 
   @IsNotEmpty()
   @IsString()
   @IsUrl()
   @ApiProperty()
-  imageUrl: string;
+  imageUrl?: string;
 }
