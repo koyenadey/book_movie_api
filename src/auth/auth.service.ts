@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   HttpCode,
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ResponseLoginDto } from './dto/response-login.dto';
 import { LoginDto } from './dto/login.dto';
@@ -15,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
 import { ResponseRegisterDto } from './dto/register.dto';
 import { MemberRoles } from '@prisma/client';
-import { MembersController } from 'src/members/members.controller';
 
 type MemberError = {
   status: HttpStatus;
@@ -38,6 +35,7 @@ export class AuthService {
 
     const accessToken = await this.generateToken(
       memberToFind.email,
+      memberToFind.id,
       memberToFind.role,
     );
 
@@ -71,8 +69,8 @@ export class AuthService {
     return userToFind;
   }
 
-  async generateToken(email: string, role: MemberRoles) {
-    const payload = { sub: email, role };
+  async generateToken(email: string, id: string, role: MemberRoles) {
+    const payload = { sub: email, id, role };
     const token = await this.jwtService.signAsync(payload);
     return token;
   }

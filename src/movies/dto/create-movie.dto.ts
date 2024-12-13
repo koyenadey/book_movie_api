@@ -32,13 +32,6 @@ enum Genres {
   Romance = 'Romance',
 }
 
-// enum PictureQualities {
-//   TwoD = 'TwoD',
-//   ThreeD = 'ThreeD',
-//   IMAX2D = 'IMAX2D',
-//   IMAX3D = 'IMAX3D',
-// }
-
 export class CreateMovieDto {
   @MinLength(3, {
     message: 'A name must be atleast $constraint1 characters long',

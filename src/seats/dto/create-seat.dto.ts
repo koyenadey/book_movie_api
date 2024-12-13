@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SeatClass } from '@prisma/client';
 import {
   IsNotEmpty,
   IsNumber,
@@ -9,16 +10,6 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-
-enum SeatClass {
-  Gold = 'GOLD',
-  Platinum = 'PLATINUM',
-  Silver = 'SILVER',
-  Balcony = 'BALCONY',
-  Recliner = 'RECLINER',
-  Premium = 'PREMIUM',
-  Economy = 'ECONOMY',
-}
 
 export class CreateSeatDto {
   @IsNumber()

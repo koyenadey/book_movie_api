@@ -37,7 +37,7 @@ export class BookingsController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(MemberRoles.Admin)
-  @ApiOkResponse({ type: ResponseBookingDto })
+  @ApiOkResponse({ isArray: true, type: ResponseBookingDto })
   getAllBookings() {
     return this.bookingsService.getAllBookings();
   }

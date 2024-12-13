@@ -36,7 +36,7 @@ export class LanguagesController {
   }
 
   @Get()
-  @ApiOkResponse({ type: ResponseLanguageDto })
+  @ApiOkResponse({ isArray: true, type: ResponseLanguageDto })
   getAllLanguages() {
     return this.languagesService.getAllLanguages();
   }

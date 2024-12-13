@@ -6,11 +6,14 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+  seed = "prisma/seed.ts"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [pgcrypto]
 }
 
 enum Categories{
@@ -56,8 +59,8 @@ enum SnackTypes{
 
 
 
-model Movie{
-  id String @default(uuid()) @id
+model movie{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   description String
   category Categories
@@ -68,175 +71,177 @@ model Movie{
   price Float
   thumbnail String
   coverurl String
-  languages Movie_Language[]
-  theatres Movie_Theatre[] 
-  casts Movie_CastCrew[]
-  bookings Booking[]
-  genres Movie_Genre[]
-  pictureQualites Movie_PictureQuality[]
+  languages movie_language[]
+  theatres movie_theatre[] 
+  casts movie_cast[]
+  bookings booking[]
+  genres movie_genre[]
+  pictureQualites movie_picturequality[]
+	
 }
 
-model Movie_Genre{
-  id String @id @default(uuid())
-  movieId String?
-  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
-  genreId String?
-  genre Genre? @relation(fields: [genreId],references: [id],onDelete: SetNull)
+model movie_genre{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  movieId String? @db.Uuid
+  movie movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  genreId String? @db.Uuid
+  genre genre? @relation(fields: [genreId],references: [id],onDelete: SetNull)
 
   @@unique([movieId,genreId])
+	
 }
 
-model Genre{
-  id String @id @default(uuid())
+model genre{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title String @unique
-  movies Movie_Genre[]
+  movies movie_genre[]
 }
 
-model Movie_Theatre{
-  id String  @id @default(uuid())
-  theatreId String?
-  theatre Theatre? @relation(fields: [theatreId],references: [id], onDelete: SetNull)
-  movieId String?
-  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
-  screenId String
+model movie_theatre{
+  id String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  theatreId String? @db.Uuid
+  theatre theatre? @relation(fields: [theatreId],references: [id], onDelete: SetNull)
+  movieId String? @db.Uuid
+  movie movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  screenId String @db.Uuid
   showTiming String
 
   @@unique([movieId,theatreId,screenId,showTiming])
 }
 
-model Theatre{
-  id String @default(uuid()) @id
+model theatre{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   country String 
   city String
   location String 
-  movies Movie_Theatre[] 
-  bookings Booking[]
-  snacks Snack[]
-  screens Screen[] 
+  movies movie_theatre[] 
+  bookings booking[]
+  snacks snack[]
+  screens screen[] 
 }
 
-model Language{
-  id String @id @default(uuid())
+model language{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title String @unique
   code String @db.Char(2) //it follows ISO 639-1 language code
-  movie Movie_Language[]
+  movie movie_language[]
 }
 
-model Movie_Language{
+model movie_language{
   id String @id @default(uuid())
-  movieId String?
-  movie Movie? @relation(fields:[movieId],references:[id],onDelete: SetNull)
-  languageId String?
-  language Language? @relation(fields:[languageId],references: [id],onDelete: SetNull)
+  movieId String? @db.Uuid
+  movie movie? @relation(fields:[movieId],references:[id],onDelete: SetNull)
+  languageId String? @db.Uuid
+  language language? @relation(fields:[languageId],references: [id],onDelete: SetNull)
 
   @@unique([movieId,languageId])
 }
 
-model PictureQuality{
-  id String @id @default(uuid())
+model picturequality{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title String @unique
-  movies Movie_PictureQuality[]
+  movies movie_picturequality[]
 }
 
-model Movie_PictureQuality{
-  id String @id @default(uuid())
-  movieId String?
-  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
-  pictureQualityId String?
-  pictureQuality PictureQuality? @relation(fields: [pictureQualityId],references: [id],onDelete: SetNull)
+model movie_picturequality{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  movieId String? @db.Uuid
+  movie movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  pictureQualityId String? @db.Uuid
+  pictureQuality picturequality? @relation(fields: [pictureQualityId],references: [id],onDelete: SetNull)
 }
 
-model CastCrew{
-  id String @id @default(uuid())
+model cast{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   imageUrl String
-  movie Movie_CastCrew[] //relation
+  movie movie_cast[] //relation
 }
 
-model Movie_CastCrew{
-  id String @id @default(uuid())
-  castId String? 
-  casts CastCrew? @relation(fields: [castId],references: [id],onDelete: SetNull)
-  movieId String?
-  movies Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+model movie_cast{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  castId String? @db.Uuid
+  casts cast? @relation(fields: [castId],references: [id],onDelete: SetNull)
+  movieId String? @db.Uuid
+  movies movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
   role CastRoles
 
   @@unique([castId,movieId])
 }
 
-model Member{
-  id String @id @default(uuid())
+model member{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String
   email String @unique
   password String
   role MemberRoles
-  bookings Booking[]
+  bookings booking[]
 }
 
-model Booking{
-  id String @id @default(uuid())
-  movieId String?
-  movie Movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
-  memberId String?
-  member Member? @relation(fields: [memberId],references: [id],onDelete: SetNull)
-  theatreId String? // one booking will have only one theatre, but one theatre will have multiple bookings
-  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+model booking{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  movieId String? @db.Uuid
+  movie movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
+  memberId String? @db.Uuid
+  member member? @relation(fields: [memberId],references: [id],onDelete: SetNull)
+  theatreId String? @db.Uuid // one booking will have only one theatre, but one theatre will have multiple bookings
+  theatre theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
   bookingDate DateTime
   price Float
   showTiming String
-  seats Booking_Seat[]
-  snacks Booking_Snack[]
+  seats booking_seat[]
+  snacks booking_snack[]
 }
-model Screen{
-  id String @id @default(uuid())
+model screen{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title String @unique
   capacity Int @db.SmallInt
   seatLayout String @db.Char(1)
-  seats Seat[]
-  theatreId String? // This screen belongs to so and so theatre
-  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+  seats seat[]
+  theatreId String? @db.Uuid // This screen belongs to so and so theatre
+  theatre theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
 }
 
-model Snack{
-  id String @id @default(uuid())
+model snack{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   weight Float
   price Float
   quantity Int
   categories SnackCategories
   type SnackTypes
-  theatreId String?
-  theatre Theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
-  bookings Booking_Snack[]
+  theatreId String? @db.Uuid
+  theatre theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
+  bookings booking_snack[]
 }
 
-model Booking_Snack{
-  id String @id @default(uuid())
-  bookingId String?
-  bookings Booking? @relation(fields: [bookingId],references: [id],onDelete: SetNull)
-  snackId String?
+model booking_snack{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId String? @db.Uuid
+  bookings booking? @relation(fields: [bookingId],references: [id],onDelete: SetNull)
+  snackId String? @db.Uuid
   qtyOrdered Int
-  snacks Snack? @relation(fields: [snackId],references: [id],onDelete: SetNull)
+  snacks snack? @relation(fields: [snackId],references: [id],onDelete: SetNull)
 }
 
-model Booking_Seat{
-  id String @id @default(uuid())
-  bookingId String?
-  bookings Booking? @relation(fields: [bookingId],references: [id], onDelete: SetNull)
-  seatId String?
-  seats Seat? @relation(fields: [seatId],references: [id],onDelete: SetNull)
+model booking_seat{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId String? @db.Uuid
+  bookings booking? @relation(fields: [bookingId],references: [id], onDelete: SetNull)
+  seatId String? @db.Uuid
+  seats seat? @relation(fields: [seatId],references: [id],onDelete: SetNull)
   showTiming String
 
   @@unique([seatId,showTiming])
 }
-model Seat{
-  id String @id @default(uuid())
+model seat{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   row Int
   section SeatClass
   seatNumber String
   price Float
-  screenId String? 
-  bookings Booking_Seat[]
-  screen Screen? @relation(fields: [screenId],references: [id],onDelete: SetNull)
+  screenId String? @db.Uuid
+  bookings booking_seat[]
+  screen screen? @relation(fields: [screenId],references: [id],onDelete: SetNull)
 }
