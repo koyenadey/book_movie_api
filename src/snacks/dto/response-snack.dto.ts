@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { SnackCategories, SnackTypes } from '@prisma/client';
+import { snack_categories, snack_types } from '@prisma/client';
 
 export class ResponseSnackDto {
   @ApiProperty({ example: 'a0a0535f-3607-406e-8cfe-7543ea2f2eff' })
@@ -18,11 +18,11 @@ export class ResponseSnackDto {
   @ApiProperty({ example: 10 })
   quantity: number;
 
-  @ApiProperty({ example: SnackCategories.BEVERAGES })
-  categories: SnackCategories;
+  @ApiProperty({ example: snack_categories.BEVERAGES })
+  categories: snack_categories;
 
-  @ApiProperty({ example: SnackTypes.VEG })
-  type: SnackTypes;
+  @ApiProperty({ example: snack_types.VEG })
+  type: snack_types;
 
   @ApiProperty({ example: '9c1eee8f-3c33-43b4-98cb-03dea058d731' })
   theatreId: string;

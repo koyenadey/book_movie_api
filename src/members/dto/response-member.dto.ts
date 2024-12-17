@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberRoles } from '@prisma/client';
+import { member_roles } from '@prisma/client';
 
 export class ResponseMemberDto {
   @ApiProperty({ example: '259bd9cd-d1ae-4305-aeba-0ba4ade57973' })
@@ -14,8 +14,8 @@ export class ResponseMemberDto {
   @ApiProperty({ example: 'Averydifferen#p@$$w0rdwhichisH@$hed&isl00000000ng' })
   password: string;
 
-  @ApiProperty({ example: MemberRoles.Customer })
-  role: MemberRoles;
+  @ApiProperty({ example: member_roles.Customer })
+  role: member_roles;
 }
 
 export class ResponseMemberDetailsDto extends ResponseMemberDto {

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateCastCrewDto } from './dto/create-cast-crew.dto';
 import { UpdateCastCrewDto } from './dto/update-cast-crew.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { Movie } from '../common/type';
 import { ResponseCastDto } from './dto/response-cast-crew.dto';
 
 @Injectable()
@@ -12,25 +11,25 @@ export class CastCrewService {
   createCastCrew(
     createCastCrewDto: CreateCastCrewDto,
   ): Promise<ResponseCastDto> {
-    return this.databaseService.castCrew.create({
+    return this.databaseService.cast.create({
       data: createCastCrewDto,
     });
   }
 
   getAllCastCrew(movieId?: string): Promise<ResponseCastDto[]> {
     if (movieId) {
-      return this.databaseService.castCrew.findMany({
+      return this.databaseService.cast.findMany({
         where: {
           movie: { some: { movieId } },
         },
       });
     }
 
-    return this.databaseService.castCrew.findMany();
+    return this.databaseService.cast.findMany();
   }
 
   getCastCrewById(id: string): Promise<ResponseCastDto> {
-    return this.databaseService.castCrew.findUnique({
+    return this.databaseService.cast.findUnique({
       where: {
         id,
       },
@@ -41,7 +40,7 @@ export class CastCrewService {
     id: string,
     updateCastCrewDto: UpdateCastCrewDto,
   ): Promise<ResponseCastDto> {
-    return this.databaseService.castCrew.update({
+    return this.databaseService.cast.update({
       where: {
         id,
       },
@@ -50,7 +49,7 @@ export class CastCrewService {
   }
 
   deleteCastCrewById(id: string): Promise<ResponseCastDto> {
-    return this.databaseService.castCrew.delete({
+    return this.databaseService.cast.delete({
       where: {
         id,
       },

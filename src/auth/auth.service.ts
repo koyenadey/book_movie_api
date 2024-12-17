@@ -12,7 +12,7 @@ import { comparePassword } from 'src/common/utils/hashPass';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseMemberDto } from 'src/members/dto/response-member.dto';
 import { ResponseRegisterDto } from './dto/register.dto';
-import { MemberRoles } from '@prisma/client';
+import { member_roles } from '@prisma/client';
 
 type MemberError = {
   status: HttpStatus;
@@ -69,7 +69,7 @@ export class AuthService {
     return userToFind;
   }
 
-  async generateToken(email: string, id: string, role: MemberRoles) {
+  async generateToken(email: string, id: string, role: member_roles) {
     const payload = { sub: email, id, role };
     const token = await this.jwtService.signAsync(payload);
     return token;

@@ -3,7 +3,7 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { encryptPassword } from 'src/common/utils/hashPass';
-import { Member, MemberRoles } from '@prisma/client';
+import { member_roles } from '@prisma/client';
 import {
   ResponseMemberDetailsDto,
   ResponseMemberDto,
@@ -17,11 +17,11 @@ export class MembersService {
     const updated_password = encryptPassword(createMemberDto.password);
     createMemberDto.password = updated_password;
     return this.databaseService.member.create({
-      data: { ...createMemberDto, role: MemberRoles.Customer },
+      data: { ...createMemberDto, role: member_roles.Customer },
     });
   }
 
-  getAllMembers(role?: MemberRoles): Promise<ResponseMemberDto[]> {
+  getAllMembers(role?: member_roles): Promise<ResponseMemberDto[]> {
     if (role)
       return this.databaseService.member.findMany({
         where: {

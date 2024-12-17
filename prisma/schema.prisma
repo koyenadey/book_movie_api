@@ -16,25 +16,25 @@ datasource db {
   extensions = [pgcrypto]
 }
 
-enum Categories{
+enum categories{
   UA
   A
   KIDS
 }
 
-enum CastRoles{
+enum cast_roles{
   Actor
   Musician
   Producer
   Director
 }
 
-enum MemberRoles{
+enum member_roles{
   Customer
   Admin
 }
 
-enum SeatClass{
+enum seat_class{
   GOLD
   PLATINUM
   SILVER
@@ -44,7 +44,7 @@ enum SeatClass{
   ECONOMY
 }
 
-enum SnackCategories{
+enum snack_categories{
   BITES
   BEVERAGES
   DESSERT
@@ -52,7 +52,7 @@ enum SnackCategories{
   POPCORN
 }
 
-enum SnackTypes{
+enum snack_types{
   VEG
   NON_VEG
 }
@@ -63,12 +63,12 @@ model movie{
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
   description String
-  category Categories
+  category categories
   rating Float
   duration String
   release_date DateTime
   expiring_date DateTime
-  price Float
+  price Float 
   thumbnail String
   coverurl String
   languages movie_language[]
@@ -129,7 +129,7 @@ model language{
 }
 
 model movie_language{
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   movieId String? @db.Uuid
   movie movie? @relation(fields:[movieId],references:[id],onDelete: SetNull)
   languageId String? @db.Uuid
@@ -165,7 +165,7 @@ model movie_cast{
   casts cast? @relation(fields: [castId],references: [id],onDelete: SetNull)
   movieId String? @db.Uuid
   movies movie? @relation(fields: [movieId],references: [id],onDelete: SetNull)
-  role CastRoles
+  role cast_roles
 
   @@unique([castId,movieId])
 }
@@ -175,7 +175,7 @@ model member{
   name String
   email String @unique
   password String
-  role MemberRoles
+  role member_roles
   bookings booking[]
 }
 
@@ -209,8 +209,8 @@ model snack{
   weight Float
   price Float
   quantity Int
-  categories SnackCategories
-  type SnackTypes
+  categories snack_categories
+  type snack_types
   theatreId String? @db.Uuid
   theatre theatre? @relation(fields: [theatreId],references: [id],onDelete: SetNull)
   bookings booking_snack[]
@@ -238,7 +238,7 @@ model booking_seat{
 model seat{
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   row Int
-  section SeatClass
+  section seat_class
   seatNumber String
   price Float
   screenId String? @db.Uuid

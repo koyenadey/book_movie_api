@@ -11,17 +11,17 @@ export class PictureQualitiesService {
   createPictQuality(
     createPictureQualityDto: CreatePictureQualityDto,
   ): Promise<ResponsePictureQuality> {
-    return this.databaseService.pictureQuality.create({
+    return this.databaseService.picturequality.create({
       data: createPictureQualityDto,
     });
   }
 
   getAllPictQualities(): Promise<ResponsePictureQuality[]> {
-    return this.databaseService.pictureQuality.findMany();
+    return this.databaseService.picturequality.findMany();
   }
 
   getDetailsById(id: string): Promise<ResponsePictureQuality> {
-    return this.databaseService.pictureQuality.findUnique({
+    return this.databaseService.picturequality.findUnique({
       where: { id },
     });
   }
@@ -30,14 +30,14 @@ export class PictureQualitiesService {
     id: string,
     updatePictureQualityDto: UpdatePictureQualityDto,
   ): Promise<ResponsePictureQuality> {
-    return this.databaseService.pictureQuality.update({
+    return this.databaseService.picturequality.update({
       where: { id },
       data: updatePictureQualityDto,
     });
   }
 
   removeQualityById(id: string): Promise<ResponsePictureQuality> {
-    return this.databaseService.pictureQuality.delete({
+    return this.databaseService.picturequality.delete({
       where: { id },
     });
   }

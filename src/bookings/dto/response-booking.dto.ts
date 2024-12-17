@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SeatClass } from '@prisma/client';
+import { seat_class } from '@prisma/client';
 
 export type BookedSnackType = { qtyOrdered: number; snacks: { name: string } };
 
@@ -37,6 +37,6 @@ export class ResponseBookingDto {
 
   @ApiProperty()
   seatsBooked: {
-    seats: { row: number; section: SeatClass; seatNumber: string };
+    seats: { row: number; section: seat_class; seatNumber: string };
   }[];
 }

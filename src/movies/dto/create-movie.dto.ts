@@ -1,4 +1,4 @@
-import { CastRoles, Categories } from '@prisma/client';
+import { cast_roles, categories } from '@prisma/client';
 import {
   IsAlpha,
   IsNotEmpty,
@@ -14,7 +14,13 @@ import {
   IsArray,
   IsUrl,
 } from 'class-validator';
-import { MovieCastsCreateType, MovieTheatreCreateType } from 'src/common/type';
+import {
+  Movie_Genre,
+  Movie_Language,
+  Movie_PictQuality,
+  MovieCastsCreateType,
+  MovieTheatreCreateType,
+} from 'src/common/type';
 
 enum Genres {
   Action = 'Action',
@@ -36,7 +42,6 @@ export class CreateMovieDto {
   @MinLength(3, {
     message: 'A name must be atleast $constraint1 characters long',
   })
-  @IsAlpha()
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -46,10 +51,10 @@ export class CreateMovieDto {
   @MaxLength(300, { message: 'description cannot be more than 300 characters' })
   description: string;
 
-  @IsEnum(Categories)
+  @IsEnum(categories)
   @IsNotEmpty()
   @IsString()
-  category: Categories;
+  category: categories;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
@@ -83,10 +88,10 @@ export class CreateMovieDto {
   coverurl: string;
 
   @IsArray()
-  genres: string[]; //genres junction table
+  genres: Movie_Genre[]; //genres junction table
 
   @IsArray()
-  languages: string[]; //language junction table 812edcdc-eccb-4f28-b6cf-2f3d81717fa9,0912f031-40fa-4509-8efc-dbc033f49242
+  languages: Movie_Language[]; //language junction table 812edcdc-eccb-4f28-b6cf-2f3d81717fa9,0912f031-40fa-4509-8efc-dbc033f49242
 
   @IsArray()
   theatres: MovieTheatreCreateType[]; //theatres junction table 3f244730-b824-4da9-8291-58225828699c
@@ -95,5 +100,5 @@ export class CreateMovieDto {
   casts: MovieCastsCreateType[]; //casts junction table 2d68f5b6-b891-43aa-b445-f11ae4d78cf5q
 
   @IsArray()
-  pictureQualities: string[]; //pictureQualities junction table 06c2d4d9-ef61-41f7-93fe-9a66ec036159, c2b4c8bc-d3ba-41b1-81a7-c7ba7cc509f4
+  pictureQualities: Movie_PictQuality[]; //pictureQualities junction table 06c2d4d9-ef61-41f7-93fe-9a66ec036159, c2b4c8bc-d3ba-41b1-81a7-c7ba7cc509f4
 }

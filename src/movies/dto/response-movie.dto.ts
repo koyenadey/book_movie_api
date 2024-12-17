@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CastRoles, Categories } from '@prisma/client';
+import { cast_roles, categories } from '@prisma/client';
 
 export class ResponseMovieDto {
   @ApiProperty()
@@ -12,7 +12,7 @@ export class ResponseMovieDto {
   description: string;
 
   @ApiProperty()
-  category: Categories;
+  category: categories;
 
   @ApiProperty()
   rating: number;
@@ -36,20 +36,22 @@ export class ResponseMovieDto {
   coverurl: string;
 
   @ApiProperty()
-  genres: { genre: { title: string } }[];
+  genres: { id: string; title: string }[];
 
   @ApiProperty()
   languages: { language: { title: string } }[];
 
   @ApiProperty()
   theatres: {
-    showTiming: string;
-    theatre: { name: string; screens: { title: string }[] };
+    id: string;
+    name: string;
+    showTime: string;
+    screens: { id: string; title: string[] };
   }[];
 
   @ApiProperty()
-  casts: { casts: { name: string }; role: CastRoles }[];
+  casts: { id: string; name: string; role: cast_roles }[];
 
   @ApiProperty()
-  pictureQualities: { pictureQuality: { title: string } }[];
+  picture_qualities: { id: string; title: string }[];
 }

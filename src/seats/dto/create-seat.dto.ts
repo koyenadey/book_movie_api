@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SeatClass } from '@prisma/client';
+import { seat_class } from '@prisma/client';
 import {
   IsNotEmpty,
   IsNumber,
@@ -23,7 +23,7 @@ export class CreateSeatDto {
   @MinLength(5)
   @MaxLength(25)
   @ApiProperty()
-  section: SeatClass;
+  section: seat_class;
 
   @IsNotEmpty()
   @IsString()

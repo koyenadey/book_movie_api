@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberRoles } from '@prisma/client';
+
 import {
-  IS_STRONG_PASSWORD,
   IsAlpha,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsString,
   IsStrongPassword,

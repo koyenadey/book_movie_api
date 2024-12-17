@@ -16,7 +16,7 @@ import {
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
-import { MemberRoles } from '@prisma/client';
+import { member_roles } from '@prisma/client';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -48,10 +48,10 @@ export class MembersController {
 
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ isArray: true, type: ResponseMemberDto })
   getAllMembers(
-    @Query('role') role?: MemberRoles,
+    @Query('role') role?: member_roles,
   ): Promise<ResponseMemberDto[]> {
     return this.membersService.getAllMembers(role);
   }
@@ -61,10 +61,10 @@ export class MembersController {
   @ApiQuery({ required: true, name: 'email' })
   @ApiResponse({ type: ResponseMemberDto })
   getMemberProfile(
-    @Request() req: { email: string; role: MemberRoles },
+    @Request() req: { email: string; role: member_roles },
     @Query('email') emailId: string,
   ) {
-    if (req.role !== MemberRoles.Admin && req.email !== emailId)
+    if (req.role !== member_roles.Admin && req.email !== emailId)
       throw new UnauthorizedException(
         "You are not authorized to access other's data!",
       );
@@ -73,7 +73,7 @@ export class MembersController {
 
   @Get(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiResponse({ type: ResponseMemberDetailsDto })
   getMemberById(@Param('id', ParseUUIDPipe) id: string) {
     return this.membersService.getMemberById(id);

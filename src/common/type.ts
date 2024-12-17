@@ -1,20 +1,20 @@
-import { CastRoles, SeatClass } from '@prisma/client';
+import { cast_roles, seat_class } from '@prisma/client';
 
-export enum Genre {
-  Action = 'Action',
-  Adventure = 'Adventure',
-  Animation = 'Animation',
-  Comedy = 'Comedy',
-  Crime = 'Crime',
-  Documentary = 'Documentary',
-  Drama = 'Drama',
-  Family = 'Family',
-  Fantasy = 'Fantasy',
-  History = 'History',
-  Horror = 'Horror',
-  Mystery = 'Mystery',
-  Romance = 'Romance',
-}
+// export enum Genre {
+//   Action = 'Action',
+//   Adventure = 'Adventure',
+//   Animation = 'Animation',
+//   Comedy = 'Comedy',
+//   Crime = 'Crime',
+//   Documentary = 'Documentary',
+//   Drama = 'Drama',
+//   Family = 'Family',
+//   Fantasy = 'Fantasy',
+//   History = 'History',
+//   Horror = 'Horror',
+//   Mystery = 'Mystery',
+//   Romance = 'Romance',
+// }
 
 export type Language = {
   title: string;
@@ -35,7 +35,7 @@ export type BookSnackType = {
 
 export type MovieCastsCreateType = {
   castId: string;
-  role: CastRoles;
+  role: cast_roles;
 };
 
 export type MovieTheatreCreateType = {
@@ -46,10 +46,26 @@ export type MovieTheatreCreateType = {
 
 export type UpdateBookingSeatType = {
   row: number;
-  section: SeatClass;
+  section: seat_class;
   seatNumber: string;
 };
 
 export enum ActionPermissions {
   UpdateOwn = 'update-own',
 }
+
+export type Movie_Language = {
+  languageId: string;
+};
+
+export type Movie_Cast = {
+  castId: string;
+};
+
+export type Movie_Genre = {
+  genreId: string;
+};
+
+export type Movie_PictQuality = {
+  qualityId: string;
+};

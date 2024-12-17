@@ -18,7 +18,7 @@ import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseBookingDto } from './dto/response-booking.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { MemberRoles } from '@prisma/client';
+import { member_roles } from '@prisma/client';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Permissions } from 'src/auth/decorators/permissions.decorator';
 import { ActionPermissions } from 'src/common/type';
@@ -36,7 +36,7 @@ export class BookingsController {
 
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ isArray: true, type: ResponseBookingDto })
   getAllBookings() {
     return this.bookingsService.getAllBookings();
@@ -51,7 +51,7 @@ export class BookingsController {
 
   @Get(':movieId')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByMovieId(@Param('movieId', ParseUUIDPipe) movieId: string) {
     return this.bookingsService.getBookingsByMovieId(movieId);
@@ -59,7 +59,7 @@ export class BookingsController {
 
   @Get(':memberId')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByMemberId(@Param('memberId', ParseUUIDPipe) memberId: string) {
     this.bookingsService.getBookingsByMemberId(memberId);
@@ -67,7 +67,7 @@ export class BookingsController {
 
   @Get(':theatreId')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByTheatreId(@Param('theatreId', ParseUUIDPipe) theatreId: string) {
     this.bookingsService.getBookingsByTheatreId(theatreId);
@@ -75,7 +75,7 @@ export class BookingsController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiBody({ type: UpdateBookingDto })
   @ApiOkResponse({ type: ResponseBookingDto })
   updateByBookingId(
@@ -87,7 +87,7 @@ export class BookingsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(MemberRoles.Admin)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   deleteBookingById(@Param('id') id: string) {
     return this.bookingsService.deleteBookingById(id);

@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { BookSnackType, UpdateBookingDto } from './dto/update-booking.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { Booking_Seat, Booking_Snack } from '@prisma/client';
 import {
   BookedSnackType,
   ResponseBookingDto,
@@ -47,7 +42,7 @@ export class BookingsService {
     }));
 
     const bookedSeats =
-      await this.databaseService.booking_Seat.createManyAndReturn({
+      await this.databaseService.booking_seat.createManyAndReturn({
         data: bookSeats,
         select: {
           seats: { select: { row: true, section: true, seatNumber: true } },
@@ -64,7 +59,7 @@ export class BookingsService {
       }));
 
       bookedSnacks =
-        await this.databaseService.booking_Snack.createManyAndReturn({
+        await this.databaseService.booking_snack.createManyAndReturn({
           data: bookSnacks,
           select: { qtyOrdered: true, snacks: { select: { name: true } } },
         });
