@@ -39,18 +39,18 @@ export class ResponseMovieDto {
   genres: { id: string; title: string }[];
 
   @ApiProperty()
-  languages: { language: { title: string } }[];
+  languages: { id: string; title: string }[];
 
   @ApiProperty()
   theatres: {
     id: string;
     name: string;
     showTime: string;
-    screens: { id: string; title: string[] };
+    screens: { id: string; title: string }[];
   }[];
 
   @ApiProperty()
-  casts: { id: string; name: string; role: cast_roles }[];
+  casts: { id: string; name: string; role: cast_roles; imageUrl: string }[];
 
   @ApiProperty()
   picture_qualities: { id: string; title: string }[];

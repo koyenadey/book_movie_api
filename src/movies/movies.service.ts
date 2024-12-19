@@ -36,40 +36,141 @@ export class MoviesService {
     }
   }
 
-  async findAll(@Query('genreId') genreId?: string) {
+  async findAll(
+    @Query('genreId') genreId?: string,
+  ): Promise<ResponseMovieDto[]> {
+    if (genreId) {
+      const result = await this.databaseService.movie.findMany({
+        where: { genres: { some: { genreId } } },
+        include: {
+          genres: { select: { genre: { select: { id: true, title: true } } } },
+          casts: {
+            select: {
+              role: true,
+              casts: { select: { id: true, name: true, imageUrl: true } },
+            },
+          },
+          theatres: {
+            select: {
+              showTiming: true,
+              theatre: {
+                select: {
+                  id: true,
+                  name: true,
+                  screens: { select: { id: true, title: true } },
+                },
+              },
+            },
+          },
+          languages: {
+            select: { language: { select: { id: true, title: true } } },
+          },
+          pictureQualites: {
+            select: { pictureQuality: { select: { id: true, title: true } } },
+          },
+        },
+      });
+
+      const tResult: ResponseMovieDto[] = this.transformResponseMovie(result);
+      return tResult;
+    }
+
     const movies = await this.databaseService.movie.findMany({
       include: {
-        genres: {
-          select: { genre: { select: { id: true, title: true } } },
-        },
-        pictureQualites: {
+        genres: { select: { genre: { select: { id: true, title: true } } } },
+        casts: {
           select: {
-            pictureQuality: {
-              select: { title: true },
+            role: true,
+            casts: { select: { id: true, name: true, imageUrl: true } },
+          },
+        },
+        theatres: {
+          select: {
+            showTiming: true,
+            theatre: {
+              select: {
+                id: true,
+                name: true,
+                screens: { select: { id: true, title: true } },
+              },
             },
           },
         },
+        languages: {
+          select: { language: { select: { id: true, title: true } } },
+        },
+        pictureQualites: {
+          select: { pictureQuality: { select: { id: true, title: true } } },
+        },
       },
     });
-    if (genreId) {
-      const foundGenre = await this.databaseService.genre.findUnique({
-        where: { id: genreId },
-      });
-      if (foundGenre) {
-        return movies.filter((movie) =>
-          movie.genres.some((genre) => genre.genre.id === genreId),
-        );
-      }
-    }
-    return movies;
+    return this.transformResponseMovie(movies);
   }
 
-  findOne(id: string) {
-    return this.databaseService.movie.findUnique({
+  transformResponseMovie(movie): ResponseMovieDto[] {
+    const result = movie.map((movie) => ({
+      ...movie,
+      genres: movie.genres.map((g) => g.genre),
+      casts: movie.casts.map((c) => ({ role: c.role, ...c.casts })),
+      theatres: movie.theatres.map((t) => ({
+        showTime: t.showTiming,
+        screens: t.theatre.screens,
+        ...t.theatre,
+      })),
+      languages: movie.languages.map((l) => l.language),
+      picture_qualities: movie.pictureQualites.map((pq) => pq.pictureQuality),
+    }));
+    return result;
+  }
+
+  async findOne(id: string): Promise<ResponseMovieDto> {
+    const movie = await this.databaseService.movie.findUnique({
       where: {
         id,
       },
+      include: {
+        genres: { select: { genre: { select: { id: true, title: true } } } },
+        casts: {
+          select: {
+            role: true,
+            casts: { select: { id: true, name: true, imageUrl: true } },
+          },
+        },
+        theatres: {
+          select: {
+            showTiming: true,
+            theatre: {
+              select: {
+                id: true,
+                name: true,
+                screens: { select: { id: true, title: true } },
+              },
+            },
+          },
+        },
+        languages: {
+          select: { language: { select: { id: true, title: true } } },
+        },
+        pictureQualites: {
+          select: { pictureQuality: { select: { id: true, title: true } } },
+        },
+      },
     });
+
+    const result: ResponseMovieDto = {
+      ...movie,
+      genres: movie.genres.map((g) => g.genre),
+      casts: movie.casts.map((g) => ({ role: g.role, ...g.casts })),
+      theatres: movie.theatres.map((t) => ({
+        showTime: t.showTiming,
+        screens: t.theatre.screens,
+        ...t.theatre,
+      })),
+      languages: movie.languages.map((l) => l.language),
+      picture_qualities: movie.pictureQualites.map((pq) => pq.pictureQuality),
+    };
+
+    return result;
   }
 
   update(id: string, updateMovieDto: UpdateMovieDto) {
