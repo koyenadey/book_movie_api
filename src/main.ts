@@ -13,6 +13,9 @@ async function bootstrap() {
     .setDescription('The BookMyMovie API description')
     .setVersion(env.VERSION)
     .addTag('BookMyMovie')
+    .addBearerAuth(
+      {type:'http',scheme:'bearer',bearerFormat:'JWT'}
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(globalPrefix, app, documentFactory);

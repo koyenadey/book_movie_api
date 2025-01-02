@@ -19,7 +19,7 @@ import { ResponseBookingDto } from './dto/response-booking.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { member_roles } from '@prisma/client';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AutheGuard } from 'src/auth/guards/auth.guard';
 import { Permissions } from 'src/auth/decorators/permissions.decorator';
 import { ActionPermissions } from 'src/common/type';
 
@@ -35,7 +35,7 @@ export class BookingsController {
   }
 
   @Get()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ isArray: true, type: ResponseBookingDto })
   getAllBookings() {
@@ -43,14 +43,14 @@ export class BookingsController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AutheGuard)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingDetailsById(@Param('id', ParseUUIDPipe) id: string) {
     return this.bookingsService.getBookingDetailsById(id);
   }
 
   @Get(':movieId')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByMovieId(@Param('movieId', ParseUUIDPipe) movieId: string) {
@@ -58,7 +58,7 @@ export class BookingsController {
   }
 
   @Get(':memberId')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByMemberId(@Param('memberId', ParseUUIDPipe) memberId: string) {
@@ -66,7 +66,7 @@ export class BookingsController {
   }
 
   @Get(':theatreId')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   getBookingsByTheatreId(@Param('theatreId', ParseUUIDPipe) theatreId: string) {
@@ -74,7 +74,7 @@ export class BookingsController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiBody({ type: UpdateBookingDto })
   @ApiOkResponse({ type: ResponseBookingDto })
@@ -86,7 +86,7 @@ export class BookingsController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseBookingDto })
   deleteBookingById(@Param('id') id: string) {

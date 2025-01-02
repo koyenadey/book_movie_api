@@ -15,7 +15,7 @@ import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseLanguageDto } from './dto/response-language.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AutheGuard } from 'src/auth/guards/auth.guard';
 import { member_roles } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -25,7 +25,7 @@ export class LanguagesController {
   constructor(private readonly languagesService: LanguagesService) {}
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiBody({ type: CreateLanguageDto })
   @ApiCreatedResponse({ type: ResponseLanguageDto })
@@ -48,7 +48,7 @@ export class LanguagesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiBody({ type: UpdateLanguageDto })
   @ApiOkResponse({ type: ResponseLanguageDto })
@@ -60,7 +60,7 @@ export class LanguagesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseLanguageDto })
   removeLanguageById(@Param('id', ParseUUIDPipe) id: string) {

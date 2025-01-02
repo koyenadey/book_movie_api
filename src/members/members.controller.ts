@@ -31,7 +31,7 @@ import {
 } from './dto/response-member.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AutheGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('members')
 export class MembersController {
@@ -47,7 +47,7 @@ export class MembersController {
   }
 
   @Get()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiOkResponse({ isArray: true, type: ResponseMemberDto })
   getAllMembers(
@@ -57,7 +57,7 @@ export class MembersController {
   }
 
   @Get('profile')
-  @UseGuards(AuthGuard)
+  @UseGuards(AutheGuard)
   @ApiQuery({ required: true, name: 'email' })
   @ApiResponse({ type: ResponseMemberDto })
   getMemberProfile(
@@ -72,7 +72,7 @@ export class MembersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AutheGuard, RolesGuard)
   @Roles(member_roles.Admin)
   @ApiResponse({ type: ResponseMemberDetailsDto })
   getMemberById(@Param('id', ParseUUIDPipe) id: string) {
@@ -80,7 +80,7 @@ export class MembersController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AutheGuard)
   @ApiBody({ type: UpdateMemberDto })
   @ApiResponse({ type: ResponseMemberDto })
   update(
@@ -91,7 +91,7 @@ export class MembersController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AutheGuard)
   @ApiResponse({ type: ResponseMemberDetailsDto })
   deleteMember(
     @Param('id', ParseUUIDPipe) id: string,
