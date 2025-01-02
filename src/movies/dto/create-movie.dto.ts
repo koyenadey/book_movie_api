@@ -15,19 +15,61 @@ import {
   IsUrl,
   ArrayNotEmpty,
   ValidateNested,
+  IsUUID,
 } from 'class-validator';
-import {
-  Movie_Language,
-  Movie_PictQuality,
-  MovieCastsCreateType,
-  MovieTheatreCreateType,
-} from 'src/common/type';
 
 class Movie_Genre {
   @ApiProperty()
   @IsString()
+  @IsUUID()
   @IsNotEmpty()
   genreId: string;
+}
+
+class Movie_Language {
+  @ApiProperty()
+  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
+  languageId: string;
+}
+
+class Movie_Cast {
+  @ApiProperty()
+  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
+  castId: string;
+
+  @ApiProperty()
+  @IsEnum(cast_roles)
+  @IsNotEmpty()
+  role: cast_roles;
+}
+
+class Movie_Theatre {
+  @ApiProperty()
+  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
+  theatreId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  screenId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  showTiming: string;
+}
+
+class Movie_PictQuality {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  qualityId: string;
 }
 export class CreateMovieDto {
   @ApiProperty()
@@ -46,13 +88,12 @@ export class CreateMovieDto {
 
   @IsEnum(categories)
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
+  @ApiProperty({ enum: categories })
   category: categories;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 2.3 })
   rating: number;
 
   @IsNotEmpty()
@@ -73,7 +114,7 @@ export class CreateMovieDto {
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 20.99 })
   price: number;
 
   @IsNotEmpty()
@@ -96,18 +137,26 @@ export class CreateMovieDto {
   genres: Movie_Genre[]; //genres junction table
 
   @IsArray()
-  @ApiProperty()
+  @ValidateNested({ each: true })
+  @Type(() => Movie_Language)
+  @ApiProperty({ isArray: true, type: Movie_Language })
   languages: Movie_Language[]; //language junction table
 
   @IsArray()
-  @ApiProperty()
-  theatres: MovieTheatreCreateType[]; //theatres junction table
+  @ValidateNested({ each: true })
+  @Type(() => Movie_Theatre)
+  @ApiProperty({ isArray: true, type: Movie_Theatre })
+  theatres: Movie_Theatre[]; //theatres junction table
 
   @IsArray()
-  @ApiProperty()
-  casts: MovieCastsCreateType[]; //casts junction table
+  @ValidateNested({ each: true })
+  @Type(() => Movie_Cast)
+  @ApiProperty({ isArray: true, type: Movie_Cast })
+  casts: Movie_Cast[]; //casts junction table
 
   @IsArray()
-  @ApiProperty()
+  @ValidateNested({ each: true })
+  @Type(() => Movie_PictQuality)
+  @ApiProperty({ isArray: true, type: Movie_PictQuality })
   pictureQualities: Movie_PictQuality[]; //pictureQualities junction table
 }

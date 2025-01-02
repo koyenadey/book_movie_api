@@ -53,19 +53,3 @@ export type UpdateBookingSeatType = {
 export enum ActionPermissions {
   UpdateOwn = 'update-own',
 }
-
-export type Movie_Language = {
-  languageId: string;
-};
-
-export type Movie_Cast = {
-  castId: string;
-};
-
-// export type Movie_GenreType = {
-//   genreId: string;
-// };
-
-export type Movie_PictQuality = {
-  qualityId: string;
-};

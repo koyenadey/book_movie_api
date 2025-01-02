@@ -1,8 +1,10 @@
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { ResponseMovieDto } from './dto/response-movie.dto';
+import { ResponseUpdateMovieDto } from './dto/response-update-movie.dto';
+import { DEFAULT_PAGE_SIZE } from 'src/common/utils/constants';
 
 @Injectable()
 export class MoviesService {
@@ -37,7 +39,9 @@ export class MoviesService {
   }
 
   async findAll(
-    @Query('genreId') genreId?: string,
+    pageNo = 1,
+    genreId?: string,
+    limit?: number,
   ): Promise<ResponseMovieDto[]> {
     if (genreId) {
       const result = await this.databaseService.movie.findMany({
@@ -103,6 +107,8 @@ export class MoviesService {
           select: { pictureQuality: { select: { id: true, title: true } } },
         },
       },
+      skip: (pageNo - 1) * (limit ?? DEFAULT_PAGE_SIZE),
+      take: limit ?? DEFAULT_PAGE_SIZE,
     });
     return this.transformResponseMovie(movies);
   }
@@ -173,27 +179,30 @@ export class MoviesService {
     return result;
   }
 
-  async update(id: string, updateMovieDto: UpdateMovieDto) {
+  async update(
+    id: string,
+    updateMovieDto: UpdateMovieDto,
+  ): Promise<ResponseUpdateMovieDto> {
     const movie = await this.databaseService.movie.findUnique({
       where: { id },
-      include: {
-        theatres: {
-          select: { showTiming: true, screenId: true, theatreId: true },
-        },
-      },
     });
-    if (movie) {
-      (movie.name = updateMovieDto.name ?? movie.name),
-        (movie.description = updateMovieDto.description ?? movie.description),
-        (movie.expiring_date =
-          updateMovieDto.expiring_date ?? movie.expiring_date),
-        (movie.price = updateMovieDto.price ?? movie.price);
-      movie.coverurl = updateMovieDto.coverurl ?? movie.coverurl;
-      movie.thumbnail = updateMovieDto.thumbnail ?? movie.thumbnail;
-    }
+    if (!movie)
+      throw new NotFoundException('The requested movie does not exist');
+
+    movie.name = updateMovieDto.name ?? movie.name;
+    movie.description = updateMovieDto.description ?? movie.description;
+    movie.expiring_date = updateMovieDto.expiring_date ?? movie.expiring_date;
+    movie.price = updateMovieDto.price ?? movie.price;
+    movie.coverurl = updateMovieDto.coverurl ?? movie.coverurl;
+    movie.thumbnail = updateMovieDto.thumbnail ?? movie.thumbnail;
+
+    return this.databaseService.movie.update({
+      where: { id },
+      data: movie,
+    });
   }
 
-  remove(id: string) {
+  remove(id: string): Promise<ResponseUpdateMovieDto> {
     return this.databaseService.movie.delete({
       where: {
         id,
