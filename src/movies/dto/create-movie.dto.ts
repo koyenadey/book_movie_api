@@ -1,4 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { cast_roles, categories } from '@prisma/client';
+import { Type } from 'class-transformer';
 import {
   IsAlpha,
   IsNotEmpty,
@@ -7,38 +9,28 @@ import {
   MaxLength,
   IsEnum,
   IsNumber,
-  isNotEmpty,
   IsAlphanumeric,
   IsDateString,
-  IsUUID,
   IsArray,
   IsUrl,
+  ArrayNotEmpty,
+  ValidateNested,
 } from 'class-validator';
 import {
-  Movie_Genre,
   Movie_Language,
   Movie_PictQuality,
   MovieCastsCreateType,
   MovieTheatreCreateType,
 } from 'src/common/type';
 
-enum Genres {
-  Action = 'Action',
-  Adventure = 'Adventure',
-  Animation = 'Animation',
-  Comedy = 'Comedy',
-  Crime = 'Crime',
-  Documentary = 'Documentary',
-  Drama = 'Drama',
-  Family = 'Family',
-  Fantasy = 'Fantasy',
-  History = 'History',
-  Horror = 'Horror',
-  Mystery = 'Mystery',
-  Romance = 'Romance',
+class Movie_Genre {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  genreId: string;
 }
-
 export class CreateMovieDto {
+  @ApiProperty()
   @MinLength(3, {
     message: 'A name must be atleast $constraint1 characters long',
   })
@@ -46,6 +38,7 @@ export class CreateMovieDto {
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @MaxLength(300, { message: 'description cannot be more than 300 characters' })
@@ -54,51 +47,67 @@ export class CreateMovieDto {
   @IsEnum(categories)
   @IsNotEmpty()
   @IsString()
+  @ApiProperty()
   category: categories;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
+  @ApiProperty()
   rating: number;
 
   @IsNotEmpty()
   @IsString()
   @IsAlphanumeric()
+  @ApiProperty()
   duration: string;
 
   @IsDateString()
   @IsNotEmpty()
+  @ApiProperty()
   release_date: Date;
 
   @IsDateString()
   @IsNotEmpty()
+  @ApiProperty()
   expiring_date: Date;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsNotEmpty()
+  @ApiProperty()
   price: number;
 
   @IsNotEmpty()
   @IsUrl()
   @IsString()
+  @ApiProperty()
   thumbnail: string;
 
   @IsNotEmpty()
   @IsUrl()
   @IsString()
+  @ApiProperty()
   coverurl: string;
 
+  @ApiProperty({ isArray: true, type: Movie_Genre })
   @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true, message: 'Each item must be a valid genre' })
+  @Type(() => Movie_Genre)
   genres: Movie_Genre[]; //genres junction table
 
   @IsArray()
-  languages: Movie_Language[]; //language junction table 812edcdc-eccb-4f28-b6cf-2f3d81717fa9,0912f031-40fa-4509-8efc-dbc033f49242
+  @ApiProperty()
+  languages: Movie_Language[]; //language junction table
 
   @IsArray()
-  theatres: MovieTheatreCreateType[]; //theatres junction table 3f244730-b824-4da9-8291-58225828699c
+  @ApiProperty()
+  theatres: MovieTheatreCreateType[]; //theatres junction table
 
   @IsArray()
-  casts: MovieCastsCreateType[]; //casts junction table 2d68f5b6-b891-43aa-b445-f11ae4d78cf5q
+  @ApiProperty()
+  casts: MovieCastsCreateType[]; //casts junction table
 
   @IsArray()
-  pictureQualities: Movie_PictQuality[]; //pictureQualities junction table 06c2d4d9-ef61-41f7-93fe-9a66ec036159, c2b4c8bc-d3ba-41b1-81a7-c7ba7cc509f4
+  @ApiProperty()
+  pictureQualities: Movie_PictQuality[]; //pictureQualities junction table
 }

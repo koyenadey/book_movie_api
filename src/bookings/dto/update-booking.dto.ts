@@ -41,5 +41,5 @@ export class UpdateBookingDto {
   @ValidateNested({ each: true })
   @Type(() => BookSnackType)
   @ApiProperty({ type: [BookSnackType], required: false })
-  snacks: BookSnackType[]; //19890187-ac36-4252-a931-afd45ba18fcb,c2b471e2-7809-4aac-83e8-3a66b5fd10cc
+  snacks: BookSnackType[];
 }

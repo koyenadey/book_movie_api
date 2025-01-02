@@ -62,9 +62,9 @@ export type Movie_Cast = {
   castId: string;
 };
 
-export type Movie_Genre = {
-  genreId: string;
-};
+// export type Movie_GenreType = {
+//   genreId: string;
+// };
 
 export type Movie_PictQuality = {
   qualityId: string;

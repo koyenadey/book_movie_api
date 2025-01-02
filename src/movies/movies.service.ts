@@ -173,14 +173,24 @@ export class MoviesService {
     return result;
   }
 
-  update(id: string, updateMovieDto: UpdateMovieDto) {
-    return '';
-    // return this.databaseService.movie.update({
-    //   where: {
-    //     id,
-    //   },
-    //   data: updateMovieDto,
-    // });
+  async update(id: string, updateMovieDto: UpdateMovieDto) {
+    const movie = await this.databaseService.movie.findUnique({
+      where: { id },
+      include: {
+        theatres: {
+          select: { showTiming: true, screenId: true, theatreId: true },
+        },
+      },
+    });
+    if (movie) {
+      (movie.name = updateMovieDto.name ?? movie.name),
+        (movie.description = updateMovieDto.description ?? movie.description),
+        (movie.expiring_date =
+          updateMovieDto.expiring_date ?? movie.expiring_date),
+        (movie.price = updateMovieDto.price ?? movie.price);
+      movie.coverurl = updateMovieDto.coverurl ?? movie.coverurl;
+      movie.thumbnail = updateMovieDto.thumbnail ?? movie.thumbnail;
+    }
   }
 
   remove(id: string) {
