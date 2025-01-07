@@ -25,7 +25,6 @@ import {
 import { ResponseMovieDto } from './dto/response-movie.dto';
 import { ResponseUpdateMovieDto } from './dto/response-update-movie.dto';
 import { QueryParamsDto } from './dto/query-params.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { AutheGuard } from 'src/auth/guards/auth.guard';

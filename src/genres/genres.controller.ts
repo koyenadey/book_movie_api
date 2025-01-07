@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateGenreDto } from 'src/genres/dto/create-genre.dto';
@@ -14,12 +15,18 @@ import { GenresService } from './genres.service';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseGenreDto } from './dto/response-genre.dto';
+import { AutheGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { member_roles } from '@prisma/client';
 
 @Controller('genres')
 export class GenresController {
   constructor(private readonly genreService: GenresService) {}
 
   @Post()
+  @UseGuards(AutheGuard, RolesGuard)
+  @Roles(member_roles.Admin)
   @ApiBody({ type: CreateGenreDto })
   @ApiCreatedResponse({ type: ResponseGenreDto })
   createGenre(
@@ -35,6 +42,8 @@ export class GenresController {
   }
 
   @Get(':id')
+  @UseGuards(AutheGuard, RolesGuard)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseGenreDto })
   getGenreById(
     @Param('id', ParseUUIDPipe) id: string,
@@ -43,6 +52,8 @@ export class GenresController {
   }
 
   @Patch(':id')
+  @UseGuards(AutheGuard, RolesGuard)
+  @Roles(member_roles.Admin)
   @ApiBody({ type: UpdateGenreDto })
   @ApiOkResponse({ type: ResponseGenreDto })
   updateGenreById(
@@ -53,6 +64,8 @@ export class GenresController {
   }
 
   @Delete(':id')
+  @UseGuards(AutheGuard, RolesGuard)
+  @Roles(member_roles.Admin)
   @ApiOkResponse({ type: ResponseGenreDto })
   deleteGenreById(@Param('id') id: string): Promise<ResponseGenreDto> {
     return this.genreService.deleteGenreById(id);
