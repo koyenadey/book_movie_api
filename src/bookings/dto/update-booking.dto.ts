@@ -8,8 +8,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateBookingDto } from './create-booking.dto';
 import { Type } from 'class-transformer';
 //import { BookSnackType } from 'src/type';
 
